@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fokus - Stay Sharp. Get It Done.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Space Mono', monospace;
+      background-color: #FFF8E7;
+      color: #1A1A2E;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      max-width: 520px;
+    }
+
+    .icon {
+      width: 120px;
+      height: 120px;
+      background: #FF6B9D;
+      border: 3.5px solid #1A1A2E;
+      border-radius: 28px;
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      box-shadow: 6px 6px 0 #1A1A2E;
+    }
+
+    h1 {
+      font-size: 48px;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      font-size: 16px;
+      opacity: 0.5;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    .feature {
+      background: #fff;
+      border: 3px solid #1A1A2E;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 4px 4px 0 #1A1A2E;
+    }
+
+    .feature-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+
+    .feature p {
+      font-size: 12px;
+      opacity: 0.6;
+      line-height: 1.6;
+    }
+
+    .f1 { border-color: #FF6B9D; box-shadow: 4px 4px 0 #FF6B9D; }
+    .f2 { border-color: #4D96FF; box-shadow: 4px 4px 0 #4D96FF; }
+    .f3 { border-color: #6BCB77; box-shadow: 4px 4px 0 #6BCB77; }
+    .f4 { border-color: #FFD93D; box-shadow: 4px 4px 0 #FFD93D; }
+
+    .cta {
+      display: inline-block;
+      background: #1A1A2E;
+      color: #FFF8E7;
+      padding: 14px 36px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: 3px solid #1A1A2E;
+      transition: transform 0.1s;
+    }
+
+    .cta:hover {
+      transform: translate(2px, 2px);
+    }
+
+    .links {
+      margin-top: 32px;
+      font-size: 12px;
+    }
+
+    .links a {
+      color: #1A1A2E;
+      opacity: 0.5;
+      margin: 0 12px;
+    }
+
+    @media (max-width: 480px) {
+      .features { grid-template-columns: 1fr; }
+      h1 { font-size: 36px; letter-spacing: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="icon">
+      <svg width="64" height="64" viewBox="0 0 200 200" fill="none">
+        <circle cx="96" cy="96" r="56" fill="#FFF8E7" stroke="#1A1A2E" stroke-width="5"/>
+        <line x1="96" y1="96" x2="96" y2="62" stroke="#1A1A2E" stroke-width="5.5" stroke-linecap="round"/>
+        <line x1="96" y1="96" x2="114" y2="82" stroke="#1A1A2E" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="96" cy="96" r="4" fill="#1A1A2E"/>
+      </svg>
+    </div>
+
+    <h1>Fokus</h1>
+    <p class="tagline">stay sharp. get it done.</p>
+
+    <div class="features">
+      <div class="feature f1">
+        <div class="feature-title">Pomodoro Timer</div>
+        <p>Customizable work sessions with smart breaks.</p>
+      </div>
+      <div class="feature f2">
+        <div class="feature-title">Task Tracking</div>
+        <p>Add tasks, assign to sessions, check them off.</p>
+      </div>
+      <div class="feature f3">
+        <div class="feature-title">Focus Score</div>
+        <p>Stay in the zone. Track your focus quality.</p>
+      </div>
+      <div class="feature f4">
+        <div class="feature-title">Stats & Streaks</div>
+        <p>Daily charts and lifetime stats to stay motivated.</p>
+      </div>
+    </div>
+
+    <a class="cta" href="#">Coming Soon on the App Store</a>
+
+    <div class="links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </div>
+  </div>
+</body>
+</html>

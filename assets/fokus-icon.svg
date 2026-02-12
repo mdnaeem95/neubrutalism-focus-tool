@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Shadow rectangle -->
+  <rect
+    x="61.4" y="61.4"
+    width="942.1" height="942.1"
+    rx="184.3" ry="184.3"
+    fill="#1A1A2E"
+  />
+
+  <!-- Main background -->
+  <rect
+    x="20.5" y="20.5"
+    width="942.1" height="942.1"
+    rx="184.3" ry="184.3"
+    fill="#FFF8E7"
+    stroke="#1A1A2E" stroke-width="35.8"
+  />
+
+  <!-- Clock face (hot pink ring) -->
+  <circle
+    cx="491.5" cy="491.5" r="286.7"
+    fill="#FF6B9D"
+    stroke="#1A1A2E" stroke-width="35.8"
+  />
+
+  <!-- Inner clock circle (cream) -->
+  <circle
+    cx="491.5" cy="491.5" r="235.1"
+    fill="#FFF8E7"
+    stroke="#1A1A2E" stroke-width="21.5"
+  />
+
+  <!-- Hour mark: 12 o'clock -->
+  <line
+    x1="491.5" y1="313.8"
+    x2="491.5" y2="279.4"
+    stroke="#1A1A2E" stroke-width="28.7" stroke-linecap="round"
+  />
+
+  <!-- Hour mark: 3 o'clock -->
+  <line
+    x1="669.3" y1="491.5"
+    x2="703.7" y2="491.5"
+    stroke="#1A1A2E" stroke-width="28.7" stroke-linecap="round"
+  />
+
+  <!-- Hour mark: 6 o'clock -->
+  <line
+    x1="491.5" y1="669.3"
+    x2="491.5" y2="703.7"
+    stroke="#1A1A2E" stroke-width="28.7" stroke-linecap="round"
+  />
+
+  <!-- Hour mark: 9 o'clock -->
+  <line
+    x1="313.8" y1="491.5"
+    x2="279.4" y2="491.5"
+    stroke="#1A1A2E" stroke-width="28.7" stroke-linecap="round"
+  />
+
+  <!-- Minute hand (pointing to 12) -->
+  <line
+    x1="491.5" y1="491.5"
+    x2="491.5" y2="333.8"
+    stroke="#1A1A2E" stroke-width="32.3" stroke-linecap="round"
+  />
+
+  <!-- Hour hand (pointing to ~2 o'clock) -->
+  <line
+    x1="491.5" y1="491.5"
+    x2="583.3" y2="428.4"
+    stroke="#1A1A2E" stroke-width="39.4" stroke-linecap="round"
+  />
+
+  <!-- Center dot -->
+  <circle cx="491.5" cy="491.5" r="25.6" fill="#1A1A2E" />
+
+  <!-- Session dots -->
+  <g>
+    <!-- Dot 1: completed (green) -->
+    <circle cx="363.5" cy="860.2" r="25.6"
+      fill="#6BCB77" stroke="#1A1A2E" stroke-width="14.3" />
+    <!-- Dot 2: completed (green) -->
+    <circle cx="453.1" cy="860.2" r="25.6"
+      fill="#6BCB77" stroke="#1A1A2E" stroke-width="14.3" />
+    <!-- Dot 3: current (pink) -->
+    <circle cx="542.7" cy="860.2" r="25.6"
+      fill="#FF6B9D" stroke="#1A1A2E" stroke-width="14.3" />
+    <!-- Dot 4: upcoming (empty) -->
+    <circle cx="632.3" cy="860.2" r="25.6"
+      fill="transparent" stroke="#1A1A2E" stroke-width="14.3" />
+  </g>
+</svg>
