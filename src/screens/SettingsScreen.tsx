@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Animated, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useStore } from '../stores';
@@ -10,6 +10,7 @@ import { NeuModal } from '../components/ui/NeuModal';
 import { NeuBadge } from '../components/ui/NeuBadge';
 import { PaywallModal } from '../components/ui/PaywallModal';
 import { colors, typography, spacing, borders } from '../theme';
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../utils/constants';
 
 function Stepper({
   label,
@@ -222,6 +223,28 @@ export function SettingsScreen() {
           </View>
         </NeuCard>
 
+        <Text style={styles.sectionTitle}>LEGAL</Text>
+        <NeuCard color={colors.bgCard} shadowSize="sm">
+          <View style={styles.section}>
+            <Pressable
+              onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
+              style={styles.legalRow}
+            >
+              <MaterialCommunityIcons name="file-document-outline" size={20} color={colors.black} />
+              <Text style={styles.stepperLabel}>Terms of Use</Text>
+              <MaterialCommunityIcons name="open-in-new" size={16} color={colors.black} style={{ opacity: 0.4 }} />
+            </Pressable>
+            <Pressable
+              onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
+              style={styles.legalRow}
+            >
+              <MaterialCommunityIcons name="shield-lock-outline" size={20} color={colors.black} />
+              <Text style={styles.stepperLabel}>Privacy Policy</Text>
+              <MaterialCommunityIcons name="open-in-new" size={16} color={colors.black} style={{ opacity: 0.4 }} />
+            </Pressable>
+          </View>
+        </NeuCard>
+
         <Text style={styles.sectionTitle}>DATA</Text>
         <View style={styles.dataSection}>
           <NeuButton
@@ -383,5 +406,10 @@ const styles = StyleSheet.create({
     color: colors.black,
     opacity: 0.5,
     textDecorationLine: 'underline',
+  },
+  legalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
   },
 });

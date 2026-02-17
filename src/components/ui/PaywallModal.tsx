@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Linking } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useStore } from '../../stores';
 import { useOfferings } from '../../hooks/useSubscription';
@@ -7,6 +7,7 @@ import { NeuButton } from './NeuButton';
 import { NeuCard } from './NeuCard';
 import { NeuModal } from './NeuModal';
 import { colors, typography, spacing, borders } from '../../theme';
+import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../../utils/constants';
 
 interface PaywallModalProps {
   visible: boolean;
@@ -105,6 +106,16 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
           </Pressable>
         </View>
       )}
+
+      <View style={styles.legalLinks}>
+        <Pressable onPress={() => Linking.openURL(TERMS_OF_USE_URL)}>
+          <Text style={styles.legalText}>Terms of Use</Text>
+        </Pressable>
+        <Text style={styles.legalSeparator}>|</Text>
+        <Pressable onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}>
+          <Text style={styles.legalText}>Privacy Policy</Text>
+        </Pressable>
+      </View>
     </NeuModal>
   );
 }
@@ -177,5 +188,25 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginVertical: spacing.xl,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: spacing.lg,
+    gap: spacing.sm,
+  },
+  legalText: {
+    fontFamily: typography.fontFamily.mono,
+    fontSize: typography.fontSize.xs,
+    color: colors.black,
+    opacity: 0.4,
+    textDecorationLine: 'underline',
+  },
+  legalSeparator: {
+    fontFamily: typography.fontFamily.mono,
+    fontSize: typography.fontSize.xs,
+    color: colors.black,
+    opacity: 0.3,
   },
 });

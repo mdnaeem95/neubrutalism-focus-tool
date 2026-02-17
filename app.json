@@ -15,9 +15,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fokusapp.app",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "Fokus sends notifications when your timer sessions end so you know when to take a break or get back to work."
+        "NSUserNotificationsUsageDescription": "Fokus sends notifications when your timer sessions end so you know when to take a break or get back to work.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
