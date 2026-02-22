@@ -8,6 +8,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { colors, typography, borders, shadows, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface NeuButtonProps {
   title: string;
@@ -36,6 +37,7 @@ export function NeuButton({
   style,
   textStyle,
 }: NeuButtonProps) {
+  const c = useColors();
   const translateX = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
@@ -89,7 +91,7 @@ export function NeuButton({
     ]).start();
   };
 
-  const bgColor = variant === 'outline' ? colors.bgCard : color;
+  const bgColor = variant === 'outline' ? c.bgCard : color;
 
   return (
     <Pressable
@@ -124,7 +126,7 @@ export function NeuButton({
         style={[
           styles.content,
           {
-            backgroundColor: disabled ? colors.cream : bgColor,
+            backgroundColor: disabled ? c.cream : bgColor,
             borderColor: disabled ? '#CCC' : borders.color,
             borderWidth: borders.width.medium,
             borderRadius: borders.radius.md,
@@ -139,7 +141,7 @@ export function NeuButton({
             styles.text,
             {
               fontSize: sizeConfig.fontSize,
-              color: disabled ? '#999' : colors.black,
+              color: disabled ? '#999' : c.black,
             },
             textStyle,
           ]}

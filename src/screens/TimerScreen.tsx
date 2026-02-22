@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStore } from '../stores';
 import { useTimer } from '../hooks/useTimer';
 import { useFocusTracking } from '../hooks/useFocusTracking';
 import { useScreenEntrance } from '../hooks/useScreenEntrance';
@@ -12,11 +11,14 @@ import { TimerProgress } from '../components/timer/TimerProgress';
 import { ActiveTaskBanner } from '../components/tasks/ActiveTaskBanner';
 import { FocusReminder } from '../components/focus/FocusReminder';
 import { FocusScore } from '../components/focus/FocusScore';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
 import { colors, typography, spacing } from '../theme';
+import { useColors } from '../theme/ThemeContext';
 
 export function TimerScreen() {
   const insets = useSafeAreaInsets();
   const { opacity, translateY } = useScreenEntrance();
+  const c = useColors();
   useTimer();
   const { isFocusModeActive, focusScore, shouldShowReminder } = useFocusTracking();
   const [showReminder, setShowReminder] = useState(false);
@@ -27,13 +29,13 @@ export function TimerScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+    <ScreenContainer style={{ backgroundColor: c.bgTimer, paddingTop: insets.top + spacing.lg }}>
       <Animated.ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         style={{ opacity, transform: [{ translateY }] }}
       >
-        <Text style={styles.title}>FOCUS</Text>
+        <Text style={[styles.title, { color: c.black }]}>FOCUS</Text>
 
         <SessionIndicator />
 
@@ -57,15 +59,11 @@ export function TimerScreen() {
         onDismiss={handleDismissReminder}
         focusScore={focusScore}
       />
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgTimer,
-  },
   content: {
     padding: spacing.xl,
     gap: spacing.xl,

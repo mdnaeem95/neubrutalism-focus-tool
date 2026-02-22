@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { NeuCard } from '../ui/NeuCard';
-import { colors, typography, spacing } from '../../theme';
+import { typography, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface StatCardProps {
   label: string;
@@ -12,7 +13,8 @@ interface StatCardProps {
   delay?: number;
 }
 
-export function StatCard({ label, value, icon, color = colors.bgCard, delay = 0 }: StatCardProps) {
+export function StatCard({ label, value, icon, color, delay = 0 }: StatCardProps) {
+  const c = useColors();
   const scale = useRef(new Animated.Value(0.85)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -39,9 +41,9 @@ export function StatCard({ label, value, icon, color = colors.bgCard, delay = 0 
     <Animated.View style={{ flex: 1, opacity, transform: [{ scale }] }}>
       <NeuCard color={color} shadowSize="sm" style={styles.card}>
         <View style={styles.container}>
-          <MaterialCommunityIcons name={icon} size={24} color={colors.black} />
-          <Text style={styles.value}>{value}</Text>
-          <Text style={styles.label}>{label}</Text>
+          <MaterialCommunityIcons name={icon} size={24} color={c.black} />
+          <Text style={[styles.value, { color: c.black }]}>{value}</Text>
+          <Text style={[styles.label, { color: c.black }]}>{label}</Text>
         </View>
       </NeuCard>
     </Animated.View>
@@ -60,12 +62,10 @@ const styles = StyleSheet.create({
   value: {
     fontFamily: typography.fontFamily.monoBold,
     fontSize: typography.fontSize['2xl'],
-    color: colors.black,
   },
   label: {
     fontFamily: typography.fontFamily.mono,
     fontSize: typography.fontSize.xs,
-    color: colors.black,
     opacity: 0.6,
     textAlign: 'center',
     textTransform: 'uppercase',

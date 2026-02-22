@@ -37,10 +37,18 @@ export const useStore = create<AppState>()(
         notificationsEnabled: state.notificationsEnabled,
         hapticsEnabled: state.hapticsEnabled,
         soundEnabled: state.soundEnabled,
+        darkMode: state.darkMode,
         hasOnboarded: state.hasOnboarded,
         isPro: state.isPro,
         subscriptionPlan: state.subscriptionPlan,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Timer state is not persisted, so secondsRemaining defaults to
+        // DEFAULT_WORK_MINUTES on cold start. Sync it with the persisted setting.
+        if (state && state.timerStatus === 'idle' && state.timerPhase === 'work') {
+          useStore.setState({ secondsRemaining: state.workDurationMinutes * 60 });
+        }
+      },
     }
   )
 );

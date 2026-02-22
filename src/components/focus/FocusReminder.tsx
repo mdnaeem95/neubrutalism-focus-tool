@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { NeuButton } from '../ui/NeuButton';
 import { colors, typography, spacing, borders } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 const MOTIVATIONAL_MESSAGES = [
   'Stay focused! You got this!',
@@ -20,6 +21,7 @@ interface FocusReminderProps {
 }
 
 export function FocusReminder({ visible, onDismiss, focusScore }: FocusReminderProps) {
+  const c = useColors();
   const [message] = useState(
     () => MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)]
   );
@@ -59,10 +61,10 @@ export function FocusReminder({ visible, onDismiss, focusScore }: FocusReminderP
 
   return (
     <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]}>
-      <Animated.View style={[styles.card, { opacity: cardOpacity, transform: [{ scale: cardScale }] }]}>
-        <MaterialCommunityIcons name="target" size={48} color={colors.black} />
-        <Text style={styles.message}>{message}</Text>
-        <Text style={styles.score}>Focus Score: {focusScore}%</Text>
+      <Animated.View style={[styles.card, { backgroundColor: c.cream, opacity: cardOpacity, transform: [{ scale: cardScale }] }]}>
+        <MaterialCommunityIcons name="target" size={48} color={c.black} />
+        <Text style={[styles.message, { color: c.black }]}>{message}</Text>
+        <Text style={[styles.score, { color: c.black }]}>Focus Score: {focusScore}%</Text>
         <NeuButton
           title="Back to Focus"
           onPress={onDismiss}

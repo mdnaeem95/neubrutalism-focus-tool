@@ -5,9 +5,11 @@ import { NeuInput } from '../ui/NeuInput';
 import { NeuButton } from '../ui/NeuButton';
 import { PaywallModal } from '../ui/PaywallModal';
 import { useHaptics } from '../../hooks/useHaptics';
-import { colors, spacing } from '../../theme';
+import { spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 export function TaskInput() {
+  const c = useColors();
   const [text, setText] = useState('');
   const [showPaywall, setShowPaywall] = useState(false);
   const addTask = useStore((s) => s.addTask);
@@ -45,7 +47,7 @@ export function TaskInput() {
         <NeuButton
           title="ADD"
           onPress={handleAdd}
-          color={colors.brightYellow}
+          color={c.brightYellow}
           size="md"
           disabled={!text.trim()}
         />

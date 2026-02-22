@@ -1,12 +1,14 @@
 import React from 'react';
 import { TextInput, View, StyleSheet, TextInputProps, ViewStyle } from 'react-native';
-import { colors, typography, borders, shadows, spacing } from '../../theme';
+import { typography, borders, shadows, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface NeuInputProps extends TextInputProps {
   containerStyle?: ViewStyle;
 }
 
 export function NeuInput({ containerStyle, style, ...props }: NeuInputProps) {
+  const c = useColors();
   const shadow = shadows.sm;
 
   return (
@@ -31,6 +33,8 @@ export function NeuInput({ containerStyle, style, ...props }: NeuInputProps) {
         style={[
           styles.input,
           {
+            backgroundColor: c.bgCard,
+            color: c.black,
             borderColor: borders.color,
             borderWidth: borders.width.medium,
             borderRadius: borders.radius.md,
@@ -49,10 +53,8 @@ const styles = StyleSheet.create({
   input: {
     fontFamily: typography.fontFamily.mono,
     fontSize: typography.fontSize.base,
-    backgroundColor: colors.bgCard,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
-    color: colors.black,
     position: 'relative',
     zIndex: 1,
   },

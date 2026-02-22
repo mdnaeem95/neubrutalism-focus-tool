@@ -4,7 +4,8 @@ import { useStore } from '../../stores';
 import { NeuButton } from './NeuButton';
 import { NeuCard } from './NeuCard';
 import { PaywallModal } from './PaywallModal';
-import { colors, typography, spacing } from '../../theme';
+import { typography, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface ProGateProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface ProGateProps {
 }
 
 export function ProGate({ children, fallback }: ProGateProps) {
+  const c = useColors();
   const isPro = useStore((s) => s.isPro);
   const [showPaywall, setShowPaywall] = useState(false);
 
@@ -21,13 +23,13 @@ export function ProGate({ children, fallback }: ProGateProps) {
 
   return (
     <>
-      <NeuCard color={colors.brightYellow} shadowSize="sm">
+      <NeuCard color={c.brightYellow} shadowSize="sm">
         <View style={styles.container}>
-          <Text style={styles.label}>PRO FEATURE</Text>
+          <Text style={[styles.label, { color: '#1A1A2E' }]}>PRO FEATURE</Text>
           <NeuButton
             title="Upgrade"
             onPress={() => setShowPaywall(true)}
-            color={colors.hotPink}
+            color={c.hotPink}
             size="sm"
           />
         </View>
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: typography.fontFamily.monoBold,
     fontSize: typography.fontSize.xs,
-    color: colors.black,
+    color: '#1A1A2E',
     letterSpacing: 1,
   },
 });

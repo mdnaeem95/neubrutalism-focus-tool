@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useStore } from '../../stores';
 import { NeuCard } from '../ui/NeuCard';
 import { colors, typography, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 import { formatTime } from '../../utils/formatTime';
 
 const PHASE_LABELS: Record<string, string> = {
@@ -18,6 +19,7 @@ const PHASE_COLORS: Record<string, string> = {
 };
 
 export function TimerDisplay() {
+  const c = useColors();
   const secondsRemaining = useStore((s) => s.secondsRemaining);
   const timerPhase = useStore((s) => s.timerPhase);
   const timerStatus = useStore((s) => s.timerStatus);
@@ -64,10 +66,10 @@ export function TimerDisplay() {
 
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-      <NeuCard color={colors.bgCard} shadowSize="lg">
+      <NeuCard shadowSize="lg">
         <View style={styles.container}>
           <Text
-            style={styles.time}
+            style={[styles.time, { color: c.black }]}
             accessibilityLabel={`${Math.floor(secondsRemaining / 60)} minutes ${secondsRemaining % 60} seconds remaining`}
           >
             {formatTime(secondsRemaining)}

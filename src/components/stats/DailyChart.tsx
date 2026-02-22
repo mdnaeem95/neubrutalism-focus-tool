@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { NeuCard } from '../ui/NeuCard';
 import { useStore } from '../../stores';
 import { colors, typography, spacing, borders } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 import { getLast7Days, getDayLabel } from '../../utils/dateUtils';
 
 function AnimatedBar({
@@ -45,6 +46,7 @@ function AnimatedBar({
 }
 
 export function DailyChart() {
+  const c = useColors();
   const dailyStats = useStore((s) => s.dailyStats);
   const days = getLast7Days();
 
@@ -56,9 +58,9 @@ export function DailyChart() {
   const chartHeight = 120;
 
   return (
-    <NeuCard color={colors.bgCard} shadowSize="md">
+    <NeuCard shadowSize="md">
       <View style={styles.container}>
-        <Text style={styles.title}>LAST 7 DAYS</Text>
+        <Text style={[styles.title, { color: c.black }]}>LAST 7 DAYS</Text>
         <View style={styles.chartRow}>
           {days.map((day, index) => {
             const sessions = dailyStats[day]?.sessionsCompleted || 0;
@@ -82,8 +84,8 @@ export function DailyChart() {
                     index={index}
                   />
                 </View>
-                <Text style={styles.dayLabel}>{getDayLabel(day)}</Text>
-                <Text style={styles.countLabel}>{sessions}</Text>
+                <Text style={[styles.dayLabel, { color: c.black }]}>{getDayLabel(day)}</Text>
+                <Text style={[styles.countLabel, { color: c.black }]}>{sessions}</Text>
               </View>
             );
           })}

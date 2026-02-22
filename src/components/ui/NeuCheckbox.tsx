@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Pressable, Animated, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { colors, borders } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface NeuCheckboxProps {
   checked: boolean;
@@ -10,6 +11,7 @@ interface NeuCheckboxProps {
 }
 
 export function NeuCheckbox({ checked, onToggle, color = colors.limeGreen }: NeuCheckboxProps) {
+  const c = useColors();
   const scaleAnim = useRef(new Animated.Value(checked ? 1 : 0)).current;
   const bounceAnim = useRef(new Animated.Value(1)).current;
 
@@ -60,7 +62,7 @@ export function NeuCheckbox({ checked, onToggle, color = colors.limeGreen }: Neu
             borderColor: borders.color,
             borderWidth: borders.width.medium,
             borderRadius: borders.radius.sm,
-            backgroundColor: colors.bgCard,
+            backgroundColor: c.bgCard,
             transform: [{ scale: bounceAnim }],
           },
         ]}
@@ -76,7 +78,7 @@ export function NeuCheckbox({ checked, onToggle, color = colors.limeGreen }: Neu
             },
           ]}
         />
-        {checked && <MaterialCommunityIcons name="check-bold" size={16} color="#1A1A2E" style={styles.check} />}
+        {checked && <MaterialCommunityIcons name="check-bold" size={16} color={colors.black} style={styles.check} />}
       </Animated.View>
     </Pressable>
   );

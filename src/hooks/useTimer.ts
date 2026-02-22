@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useStore } from '../stores';
+import { useAppState } from './useAppState';
 
 export function useTimer() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -7,6 +8,18 @@ export function useTimer() {
   const secondsRemaining = useStore((s) => s.secondsRemaining);
   const tick = useStore((s) => s.tick);
   const completePhase = useStore((s) => s.completePhase);
+  const reconcileTimer = useStore((s) => s.reconcileTimer);
+
+  // Reconcile timer when app returns to foreground
+  const handleForeground = useCallback(() => {
+    reconcileTimer();
+  }, [reconcileTimer]);
+
+  const handleBackground = useCallback(() => {
+    // Nothing needed — notification is already scheduled
+  }, []);
+
+  useAppState(handleForeground, handleBackground);
 
   useEffect(() => {
     if (timerStatus === 'running') {

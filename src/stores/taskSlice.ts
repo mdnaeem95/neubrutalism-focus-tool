@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { v4 as uuidv4 } from 'uuid';
+import * as Crypto from 'expo-crypto';
 import { Task } from '../types/task';
 import { FREE_TIER_MAX_TASKS } from '../utils/constants';
 
@@ -8,6 +8,7 @@ export interface TaskSlice {
   taskLimitReached: boolean;
 
   addTask: (text: string) => void;
+  editTask: (id: string, text: string) => void;
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
   reorderTasks: (fromIndex: number, toIndex: number) => void;
@@ -31,7 +32,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set,
       taskLimitReached: false,
       tasks: [
         {
-          id: uuidv4(),
+          id: Crypto.randomUUID(),
           text,
           completed: false,
           createdAt: Date.now(),
@@ -42,6 +43,13 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set,
       ],
     }));
   },
+
+  editTask: (id, text) =>
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === id ? { ...t, text } : t
+      ),
+    })),
 
   toggleTask: (id) =>
     set((state) => ({

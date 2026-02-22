@@ -4,9 +4,9 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useStore } from '../../stores';
 import { useOfferings } from '../../hooks/useSubscription';
 import { NeuButton } from './NeuButton';
-import { NeuCard } from './NeuCard';
 import { NeuModal } from './NeuModal';
 import { colors, typography, spacing, borders } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../../utils/constants';
 
 interface PaywallModalProps {
@@ -17,11 +17,13 @@ interface PaywallModalProps {
 const FEATURES = [
   { icon: 'infinity' as const, label: 'Unlimited tasks' },
   { icon: 'chart-timeline-variant' as const, label: 'Full stats history' },
-  { icon: 'palette-outline' as const, label: 'Custom themes' },
-  { icon: 'cloud-sync-outline' as const, label: 'Cloud backup' },
+  { icon: 'brain' as const, label: 'Focus score & insights' },
+  { icon: 'export-variant' as const, label: 'Export data (CSV / JSON)' },
+  { icon: 'weather-night' as const, label: 'Dark mode & themes' },
 ];
 
 export function PaywallModal({ visible, onClose }: PaywallModalProps) {
+  const c = useColors();
   const [plan, setPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [purchasing, setPurchasing] = useState(false);
   const purchasePackage = useStore((s) => s.purchasePackage);
@@ -55,7 +57,7 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
         {FEATURES.map((f) => (
           <View key={f.label} style={styles.featureRow}>
             <MaterialCommunityIcons name={f.icon} size={20} color={colors.limeGreen} />
-            <Text style={styles.featureText}>{f.label}</Text>
+            <Text style={[styles.featureText, { color: c.black }]}>{f.label}</Text>
           </View>
         ))}
       </View>
@@ -67,23 +69,23 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
             styles.planOption,
             plan === 'monthly'
               ? { backgroundColor: colors.electricBlue, borderColor: borders.color }
-              : { backgroundColor: colors.bgCard, borderColor: '#CCC' },
+              : { backgroundColor: c.bgCard, borderColor: '#CCC' },
           ]}
         >
-          <Text style={styles.planLabel}>Monthly</Text>
-          <Text style={styles.planPrice}>{monthlyPrice}/mo</Text>
+          <Text style={[styles.planLabel, { color: c.black }]}>Monthly</Text>
+          <Text style={[styles.planPrice, { color: c.black }]}>{monthlyPrice}/mo</Text>
         </Pressable>
         <Pressable
           onPress={() => setPlan('yearly')}
           style={[
             styles.planOption,
             plan === 'yearly'
-              ? { backgroundColor: colors.brightYellow, borderColor: borders.color }
-              : { backgroundColor: colors.bgCard, borderColor: '#CCC' },
+              ? { backgroundColor: c.brightYellow, borderColor: borders.color }
+              : { backgroundColor: c.bgCard, borderColor: '#CCC' },
           ]}
         >
-          <Text style={styles.planLabel}>Yearly</Text>
-          <Text style={styles.planPrice}>{yearlyPrice}/yr</Text>
+          <Text style={[styles.planLabel, { color: c.black }]}>Yearly</Text>
+          <Text style={[styles.planPrice, { color: c.black }]}>{yearlyPrice}/yr</Text>
           <View style={styles.saveBadge}>
             <Text style={styles.saveText}>SAVE 50%</Text>
           </View>
@@ -102,18 +104,18 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
             disabled={loading && !monthlyPkg && !yearlyPkg}
           />
           <Pressable onPress={handleRestore} style={styles.restoreBtn}>
-            <Text style={styles.restoreText}>Restore Purchases</Text>
+            <Text style={[styles.restoreText, { color: c.black }]}>Restore Purchases</Text>
           </Pressable>
         </View>
       )}
 
       <View style={styles.legalLinks}>
         <Pressable onPress={() => Linking.openURL(TERMS_OF_USE_URL)}>
-          <Text style={styles.legalText}>Terms of Use</Text>
+          <Text style={[styles.legalText, { color: c.black }]}>Terms of Use</Text>
         </Pressable>
-        <Text style={styles.legalSeparator}>|</Text>
+        <Text style={[styles.legalSeparator, { color: c.black }]}>|</Text>
         <Pressable onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}>
-          <Text style={styles.legalText}>Privacy Policy</Text>
+          <Text style={[styles.legalText, { color: c.black }]}>Privacy Policy</Text>
         </Pressable>
       </View>
     </NeuModal>

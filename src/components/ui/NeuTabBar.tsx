@@ -2,13 +2,14 @@ import React, { useRef, useEffect } from 'react';
 import { View, Pressable, Text, StyleSheet, Animated } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { colors, typography, borders, spacing } from '../../theme';
+import { typography, borders, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
-const TAB_COLORS: Record<string, string> = {
-  Timer: colors.hotPink,
-  Tasks: colors.electricBlue,
-  Stats: colors.limeGreen,
-  Settings: colors.brightYellow,
+const TAB_COLOR_KEYS: Record<string, keyof import('../../theme/colors').ColorPalette> = {
+  Timer: 'hotPink',
+  Tasks: 'electricBlue',
+  Stats: 'limeGreen',
+  Settings: 'brightYellow',
 };
 
 const TAB_ICONS: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
@@ -29,8 +30,9 @@ function TabItem({
   onPress: () => void;
   accessibilityLabel?: string;
 }) {
+  const c = useColors();
   const scaleAnim = useRef(new Animated.Value(isFocused ? 1 : 0.85)).current;
-  const tabColor = TAB_COLORS[label] || colors.electricBlue;
+  const tabColor = c[TAB_COLOR_KEYS[label] ?? 'electricBlue'];
 
   useEffect(() => {
     Animated.spring(scaleAnim, {
@@ -62,12 +64,12 @@ function TabItem({
           { transform: [{ scale: scaleAnim }] },
         ]}
       >
-        <MaterialCommunityIcons name={TAB_ICONS[label] || 'circle'} size={20} color={colors.black} />
+        <MaterialCommunityIcons name={TAB_ICONS[label] || 'circle'} size={20} color={c.black} />
       </Animated.View>
       <Text
         style={[
           styles.label,
-          { color: isFocused ? colors.black : '#999' },
+          { color: isFocused ? c.black : '#999' },
         ]}
       >
         {label}
@@ -77,8 +79,9 @@ function TabItem({
 }
 
 export function NeuTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const c = useColors();
   return (
-    <View style={styles.container} accessibilityRole="tablist">
+    <View style={[styles.container, { backgroundColor: c.cream }]} accessibilityRole="tablist">
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
@@ -111,7 +114,6 @@ export function NeuTabBar({ state, descriptors, navigation }: BottomTabBarProps)
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: colors.cream,
     borderTopWidth: borders.width.thick,
     borderTopColor: borders.color,
     paddingBottom: 24,

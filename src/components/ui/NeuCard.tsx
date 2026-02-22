@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { colors, borders, shadows } from '../../theme';
+import { borders, shadows } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface NeuCardProps {
   children: ReactNode;
@@ -11,10 +12,12 @@ interface NeuCardProps {
 
 export function NeuCard({
   children,
-  color = colors.bgCard,
+  color,
   shadowSize = 'md',
   style,
 }: NeuCardProps) {
+  const c = useColors();
+  const cardColor = color ?? c.bgCard;
   const shadow = shadows[shadowSize];
 
   return (
@@ -37,7 +40,7 @@ export function NeuCard({
         style={[
           styles.content,
           {
-            backgroundColor: color,
+            backgroundColor: cardColor,
             borderColor: borders.color,
             borderWidth: borders.width.medium,
             borderRadius: borders.radius.md,

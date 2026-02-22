@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useScreenEntrance } from '../hooks/useScreenEntrance';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -8,15 +8,22 @@ import { StatCard } from '../components/stats/StatCard';
 import { DailyChart } from '../components/stats/DailyChart';
 import { StreakCalendar } from '../components/stats/StreakCalendar';
 import { NeuCard } from '../components/ui/NeuCard';
+import { NeuButton } from '../components/ui/NeuButton';
+import { ProGate } from '../components/ui/ProGate';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
 import { colors, typography, spacing } from '../theme';
+import { getLast7Days } from '../utils/dateUtils';
+import { shareStats } from '../utils/exportData';
+import { useColors } from '../theme/ThemeContext';
 
 function EmptyStats() {
+  const c = useColors();
   return (
-    <NeuCard color={colors.bgCard} shadowSize="md">
+    <NeuCard shadowSize="md">
       <View style={styles.emptyInner}>
-        <MaterialCommunityIcons name="chart-bar" size={40} color={colors.black} style={{ marginBottom: spacing.sm }} />
-        <Text style={styles.emptyTitle}>No data yet</Text>
-        <Text style={styles.emptySubtitle}>
+        <MaterialCommunityIcons name="chart-bar" size={40} color={c.black} style={{ marginBottom: spacing.sm }} />
+        <Text style={[styles.emptyTitle, { color: c.black }]}>No data yet</Text>
+        <Text style={[styles.emptySubtitle, { color: c.black }]}>
           Complete your first focus session to start tracking your progress!
         </Text>
       </View>
@@ -27,22 +34,37 @@ function EmptyStats() {
 export function StatsScreen() {
   const insets = useSafeAreaInsets();
   const { opacity, translateY } = useScreenEntrance();
+  const c = useColors();
   const totalLifetimeSessions = useStore((s) => s.totalLifetimeSessions);
   const totalLifetimeMinutes = useStore((s) => s.totalLifetimeMinutes);
   const currentStreak = useStore((s) => s.currentStreak);
   const longestStreak = useStore((s) => s.longestStreak);
+  const dailyStats = useStore((s) => s.dailyStats);
 
   const totalHours = (totalLifetimeMinutes / 60).toFixed(1);
   const hasData = totalLifetimeSessions > 0;
 
+  // Compute 7-day average focus score
+  const last7 = getLast7Days();
+  const daysWithScore = last7
+    .map((d) => dailyStats[d])
+    .filter((d) => d && d.sessionsCompleted > 0);
+  const avgFocusScore =
+    daysWithScore.length > 0
+      ? Math.round(
+          daysWithScore.reduce((sum, d) => sum + d.averageFocusScore, 0) /
+            daysWithScore.length
+        )
+      : 0;
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+    <ScreenContainer style={{ backgroundColor: c.bgStats, paddingTop: insets.top + spacing.lg }}>
       <Animated.ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         style={{ opacity, transform: [{ translateY }] }}
       >
-        <Text style={styles.title}>STATS</Text>
+        <Text style={[styles.title, { color: c.black }]}>STATS</Text>
 
         <View style={styles.grid}>
           <StatCard
@@ -76,25 +98,50 @@ export function StatsScreen() {
             delay={240}
           />
         </View>
-
         {hasData ? (
           <>
             <DailyChart />
-            <StreakCalendar />
+            <ProGate>
+              <View style={styles.grid}>
+                <StatCard
+                  label="Avg Focus"
+                  value={`${avgFocusScore}%`}
+                  icon="brain"
+                  color={
+                    avgFocusScore >= 80
+                      ? colors.limeGreen
+                      : avgFocusScore >= 50
+                      ? colors.brightYellow
+                      : colors.coral
+                  }
+                  delay={320}
+                />
+              </View>
+              <StreakCalendar />
+              <NeuButton
+                title="SHARE STATS"
+                onPress={() =>
+                  shareStats({
+                    totalSessions: totalLifetimeSessions,
+                    totalHours,
+                    currentStreak,
+                    avgFocusScore,
+                  })
+                }
+                color={colors.electricBlue}
+                size="sm"
+              />
+            </ProGate>
           </>
         ) : (
           <EmptyStats />
         )}
       </Animated.ScrollView>
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgStats,
-  },
   content: {
     padding: spacing.xl,
     gap: spacing.lg,

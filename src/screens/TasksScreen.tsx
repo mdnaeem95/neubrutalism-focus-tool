@@ -7,24 +7,27 @@ import { TaskInput } from '../components/tasks/TaskInput';
 import { TaskList } from '../components/tasks/TaskList';
 import { NeuBadge } from '../components/ui/NeuBadge';
 import { NeuButton } from '../components/ui/NeuButton';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
 import { colors, typography, spacing } from '../theme';
+import { useColors } from '../theme/ThemeContext';
 
 type Filter = 'all' | 'active' | 'completed';
 
 export function TasksScreen() {
   const insets = useSafeAreaInsets();
   const { opacity, translateY } = useScreenEntrance();
+  const c = useColors();
   const [filter, setFilter] = useState<Filter>('all');
   const tasks = useStore((s) => s.tasks);
   const clearCompletedTasks = useStore((s) => s.clearCompletedTasks);
   const completedCount = tasks.filter((t) => t.completed).length;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+    <ScreenContainer style={{ backgroundColor: c.bgTasks, paddingTop: insets.top + spacing.lg }}>
       <Animated.View style={[styles.content, { opacity, transform: [{ translateY }] }]}>
         <View style={styles.header}>
-          <Text style={styles.title}>TASKS</Text>
-          <NeuBadge label={`${tasks.length}`} active color={colors.brightYellow} />
+          <Text style={[styles.title, { color: c.black }]}>TASKS</Text>
+          <NeuBadge label={`${tasks.length}`} active color={c.brightYellow} />
         </View>
 
         <TaskInput />
@@ -35,7 +38,7 @@ export function TasksScreen() {
               key={f}
               label={f}
               active={filter === f}
-              color={colors.brightYellow}
+              color={c.brightYellow}
               onPress={() => setFilter(f)}
             />
           ))}
@@ -56,15 +59,11 @@ export function TasksScreen() {
           </View>
         )}
       </Animated.View>
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgTasks,
-  },
   content: {
     flex: 1,
     padding: spacing.xl,

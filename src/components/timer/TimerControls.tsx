@@ -20,6 +20,7 @@ export function TimerControls() {
   const skipPhase = useStore((s) => s.skipPhase);
   const startFocusMode = useStore((s) => s.startFocusMode);
   const endFocusMode = useStore((s) => s.endFocusMode);
+  const soundEnabled = useStore((s) => s.soundEnabled);
   const [showResetModal, setShowResetModal] = useState(false);
   const haptics = useHaptics();
 
@@ -33,7 +34,7 @@ export function TimerControls() {
       if (timerPhase === 'work') {
         startFocusMode();
       }
-      await scheduleTimerNotification(secondsRemaining, timerPhase);
+      await scheduleTimerNotification(secondsRemaining, timerPhase, soundEnabled);
       haptics.light();
     }
   };

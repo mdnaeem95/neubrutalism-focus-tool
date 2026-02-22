@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fokusapp.app",
-      "buildNumber": "2",
+      "buildNumber": "3",
       "infoPlist": {
         "NSUserNotificationsUsageDescription": "Fokus sends notifications when your timer sessions end so you know when to take a break or get back to work.",
         "ITSAppUsesNonExemptEncryption": false
@@ -38,6 +38,15 @@
         "projectId": "576ec4cd-db43-43e0-9ce6-193c6559a600"
       }
     },
-    "owner": "naeemsani"
+    "owner": "naeemsani",
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "fokus-app",
+          "project": "fokus"
+        }
+      ]
+    ]
   }
 }

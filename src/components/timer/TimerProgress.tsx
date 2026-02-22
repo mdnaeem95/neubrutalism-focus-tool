@@ -3,11 +3,6 @@ import { StyleSheet, ViewStyle } from 'react-native';
 import { useStore } from '../../stores';
 import { NeuProgressBar } from '../ui/NeuProgressBar';
 import { colors, spacing } from '../../theme';
-import {
-  DEFAULT_WORK_MINUTES,
-  DEFAULT_SHORT_BREAK_MINUTES,
-  DEFAULT_LONG_BREAK_MINUTES,
-} from '../../utils/constants';
 
 interface TimerProgressProps {
   style?: ViewStyle;
@@ -16,13 +11,16 @@ interface TimerProgressProps {
 export function TimerProgress({ style }: TimerProgressProps) {
   const secondsRemaining = useStore((s) => s.secondsRemaining);
   const timerPhase = useStore((s) => s.timerPhase);
+  const workMinutes = useStore((s) => s.workDurationMinutes);
+  const shortBreakMinutes = useStore((s) => s.shortBreakMinutes);
+  const longBreakMinutes = useStore((s) => s.longBreakMinutes);
 
   const totalSeconds =
     timerPhase === 'work'
-      ? DEFAULT_WORK_MINUTES * 60
+      ? workMinutes * 60
       : timerPhase === 'shortBreak'
-      ? DEFAULT_SHORT_BREAK_MINUTES * 60
-      : DEFAULT_LONG_BREAK_MINUTES * 60;
+      ? shortBreakMinutes * 60
+      : longBreakMinutes * 60;
 
   const progress = 1 - secondsRemaining / totalSeconds;
 

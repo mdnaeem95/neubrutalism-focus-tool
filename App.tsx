@@ -4,7 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Sentry from '@sentry/react-native';
+import { PostHogProvider } from 'posthog-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ThemeProvider } from './src/theme/ThemeContext';
 import { TabNavigator } from './src/navigation/TabNavigator';
 import { AnimatedSplash } from './src/components/branding/AnimatedSplash';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
@@ -12,9 +15,18 @@ import { useStore } from './src/stores';
 import { requestNotificationPermissions } from './src/hooks/useNotifications';
 import { initializePurchases } from './src/utils/purchases';
 
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? '',
+  tracesSampleRate: 0.2,
+  enabled: !!process.env.EXPO_PUBLIC_SENTRY_DSN,
+});
+
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-export default function App() {
+const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY ?? '';
+const POSTHOG_HOST = process.env.EXPO_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com';
+
+function AppContent() {
   const [ready, setReady] = useState(false);
   const [splashDone, setSplashDone] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -106,13 +118,32 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <TabNavigator />
-        </NavigationContainer>
+        <ThemeProvider>
+          <NavigationContainer>
+            <TabNavigator />
+          </NavigationContainer>
+        </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }
+
+function App() {
+  if (POSTHOG_KEY) {
+    return (
+      <PostHogProvider
+        apiKey={POSTHOG_KEY}
+        options={{ host: POSTHOG_HOST }}
+      >
+        <AppContent />
+      </PostHogProvider>
+    );
+  }
+
+  return <AppContent />;
+}
+
+export default Sentry.wrap(App);
 
 const styles = StyleSheet.create({
   root: {

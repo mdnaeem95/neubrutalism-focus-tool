@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 
 Notifications.setNotificationHandler({
@@ -18,7 +17,8 @@ export async function requestNotificationPermissions() {
 
 export async function scheduleTimerNotification(
   secondsFromNow: number,
-  phase: string
+  phase: string,
+  soundEnabled: boolean = true
 ) {
   await Notifications.cancelAllScheduledNotificationsAsync();
 
@@ -29,7 +29,7 @@ export async function scheduleTimerNotification(
         phase === 'work'
           ? 'Great work! Time for a break.'
           : 'Ready to focus again?',
-      sound: true,
+      sound: soundEnabled,
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

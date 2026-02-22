@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
+import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useStore } from '../../stores';
 import { TaskItem } from './TaskItem';
 import { NeuCard } from '../ui/NeuCard';
+import { Task } from '../../types/task';
 import { colors, typography, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface TaskListProps {
   filter: 'all' | 'active' | 'completed';
@@ -17,7 +20,9 @@ const EMPTY_CONFIG: Record<string, { icon: keyof typeof MaterialCommunityIcons.g
 };
 
 export function TaskList({ filter }: TaskListProps) {
+  const c = useColors();
   const tasks = useStore((s) => s.tasks);
+  const reorderTasks = useStore((s) => s.reorderTasks);
 
   const filtered = tasks.filter((t) => {
     if (filter === 'active') return !t.completed;
@@ -25,18 +30,51 @@ export function TaskList({ filter }: TaskListProps) {
     return true;
   });
 
+  const handleDragEnd = useCallback(
+    ({ from, to }: { from: number; to: number }) => {
+      if (from !== to) reorderTasks(from, to);
+    },
+    [reorderTasks]
+  );
+
+  const renderDraggableItem = useCallback(
+    ({ item, drag, isActive }: RenderItemParams<Task>) => (
+      <TaskItem task={item} drag={drag} isActive={isActive} />
+    ),
+    []
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: Task }) => <TaskItem task={item} />,
+    []
+  );
+
   if (filtered.length === 0) {
     const config = EMPTY_CONFIG[filter];
     return (
       <View style={styles.empty}>
-        <NeuCard color={colors.bgCard} shadowSize="sm">
+        <NeuCard shadowSize="sm">
           <View style={styles.emptyInner}>
-            <MaterialCommunityIcons name={config.icon} size={40} color={colors.black} style={{ marginBottom: spacing.sm }} />
-            <Text style={styles.emptyTitle}>{config.title}</Text>
-            <Text style={styles.emptySubtitle}>{config.subtitle}</Text>
+            <MaterialCommunityIcons name={config.icon} size={40} color={c.black} style={{ marginBottom: spacing.sm }} />
+            <Text style={[styles.emptyTitle, { color: c.black }]}>{config.title}</Text>
+            <Text style={[styles.emptySubtitle, { color: c.black }]}>{config.subtitle}</Text>
           </View>
         </NeuCard>
       </View>
+    );
+  }
+
+  // Use draggable list only for unfiltered "all" view
+  if (filter === 'all') {
+    return (
+      <DraggableFlatList
+        data={filtered}
+        keyExtractor={(item) => item.id}
+        renderItem={renderDraggableItem}
+        onDragEnd={handleDragEnd}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+      />
     );
   }
 
@@ -44,7 +82,7 @@ export function TaskList({ filter }: TaskListProps) {
     <FlatList
       data={filtered}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <TaskItem task={item} />}
+      renderItem={renderItem}
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
     />

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { NeuCard } from '../ui/NeuCard';
 import { useStore } from '../../stores';
 import { colors, typography, spacing, borders } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 import { getLast30Days } from '../../utils/dateUtils';
 
 function AnimatedCell({ hasSession, index }: { hasSession: boolean; index: number }) {
@@ -38,13 +39,14 @@ function AnimatedCell({ hasSession, index }: { hasSession: boolean; index: numbe
 }
 
 export function StreakCalendar() {
+  const c = useColors();
   const dailyStats = useStore((s) => s.dailyStats);
   const days = getLast30Days();
 
   return (
-    <NeuCard color={colors.bgCard} shadowSize="md">
+    <NeuCard shadowSize="md">
       <View style={styles.container}>
-        <Text style={styles.title}>30-DAY STREAK</Text>
+        <Text style={[styles.title, { color: c.black }]}>30-DAY STREAK</Text>
         <View style={styles.grid}>
           {days.map((day, index) => {
             const hasSession = (dailyStats[day]?.sessionsCompleted || 0) > 0;

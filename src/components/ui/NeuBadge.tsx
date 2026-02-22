@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
 import { colors, typography, borders, spacing } from '../../theme';
+import { useColors } from '../../theme/ThemeContext';
 
 interface NeuBadgeProps {
   label: string;
@@ -17,13 +18,17 @@ export function NeuBadge({
   onPress,
   style,
 }: NeuBadgeProps) {
+  const c = useColors();
   return (
     <Pressable
       onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: active }}
       style={[
         styles.badge,
         {
-          backgroundColor: active ? color : colors.bgCard,
+          backgroundColor: active ? color : c.bgCard,
           borderColor: borders.color,
           borderWidth: borders.width.thin,
           borderRadius: borders.radius.sm,
@@ -34,7 +39,7 @@ export function NeuBadge({
       <Text
         style={[
           styles.text,
-          { color: active ? colors.black : '#666' },
+          { color: active ? c.black : '#666' },
         ]}
       >
         {label}

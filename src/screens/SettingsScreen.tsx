@@ -9,8 +9,12 @@ import { NeuButton } from '../components/ui/NeuButton';
 import { NeuModal } from '../components/ui/NeuModal';
 import { NeuBadge } from '../components/ui/NeuBadge';
 import { PaywallModal } from '../components/ui/PaywallModal';
+import { ProGate } from '../components/ui/ProGate';
 import { colors, typography, spacing, borders } from '../theme';
 import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../utils/constants';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
+import { exportDataAsJSON, exportDataAsCSV } from '../utils/exportData';
+import { useColors } from '../theme/ThemeContext';
 
 function Stepper({
   label,
@@ -29,6 +33,7 @@ function Stepper({
   min?: number;
   max?: number;
 }) {
+  const tc = useColors();
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -50,24 +55,31 @@ function Stepper({
 
   return (
     <View style={styles.stepperRow}>
-      <Text style={styles.stepperLabel}>{label}</Text>
+      <Text style={[styles.stepperLabel, { color: tc.black }]}>{label}</Text>
       <View style={styles.stepperControls}>
         <Pressable
           onPress={onDecrement}
           disabled={value <= min}
-          style={[styles.stepperBtn, value <= min ? styles.stepperBtnDisabled : undefined]}
+          accessibilityRole="button"
+          accessibilityLabel={`Decrease ${label}`}
+          style={[styles.stepperBtn, { backgroundColor: tc.bgCard }, value <= min ? styles.stepperBtnDisabled : undefined]}
         >
-          <Text style={styles.stepperBtnText}>−</Text>
+          <Text style={[styles.stepperBtnText, { color: tc.black }]}>−</Text>
         </Pressable>
-        <Animated.Text style={[styles.stepperValue, { transform: [{ scale: scaleAnim }] }]}>
+        <Animated.Text
+          accessibilityLabel={`${label}: ${value} ${unit}`}
+          style={[styles.stepperValue, { color: tc.black, transform: [{ scale: scaleAnim }] }]}
+        >
           {value} {unit}
         </Animated.Text>
         <Pressable
           onPress={onIncrement}
           disabled={value >= max}
-          style={[styles.stepperBtn, value >= max ? styles.stepperBtnDisabled : undefined]}
+          accessibilityRole="button"
+          accessibilityLabel={`Increase ${label}`}
+          style={[styles.stepperBtn, { backgroundColor: tc.bgCard }, value >= max ? styles.stepperBtnDisabled : undefined]}
         >
-          <Text style={styles.stepperBtnText}>+</Text>
+          <Text style={[styles.stepperBtnText, { color: tc.black }]}>+</Text>
         </Pressable>
       </View>
     </View>
@@ -83,6 +95,7 @@ function ToggleRow({
   value: boolean;
   onToggle: () => void;
 }) {
+  const tc = useColors();
   const knobAnim = useRef(new Animated.Value(value ? 20 : 2)).current;
 
   useEffect(() => {
@@ -95,8 +108,14 @@ function ToggleRow({
   }, [value]);
 
   return (
-    <Pressable onPress={onToggle} style={styles.toggleRow}>
-      <Text style={styles.stepperLabel}>{label}</Text>
+    <Pressable
+      onPress={onToggle}
+      accessibilityRole="switch"
+      accessibilityLabel={label}
+      accessibilityState={{ checked: value }}
+      style={styles.toggleRow}
+    >
+      <Text style={[styles.stepperLabel, { color: tc.black }]}>{label}</Text>
       <View
         style={[
           styles.toggle,
@@ -106,7 +125,7 @@ function ToggleRow({
         <Animated.View
           style={[
             styles.toggleKnob,
-            { marginLeft: knobAnim },
+            { backgroundColor: tc.bgCard, marginLeft: knobAnim },
           ]}
         />
       </View>
@@ -117,10 +136,13 @@ function ToggleRow({
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { opacity, translateY } = useScreenEntrance();
+  const c = useColors();
   const [showResetModal, setShowResetModal] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const isPro = useStore((s) => s.isPro);
   const restorePurchases = useStore((s) => s.restorePurchases);
+  const darkMode = useStore((s) => s.darkMode);
+  const toggleDarkMode = useStore((s) => s.toggleDarkMode);
 
   const workDuration = useStore((s) => s.workDurationMinutes);
   const shortBreak = useStore((s) => s.shortBreakMinutes);
@@ -138,16 +160,16 @@ export function SettingsScreen() {
   const resetSettingsToDefaults = useStore((s) => s.resetSettingsToDefaults);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.lg }]}>
+    <ScreenContainer style={{ backgroundColor: c.bgSettings, paddingTop: insets.top + spacing.lg }}>
       <Animated.ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         style={{ opacity, transform: [{ translateY }] }}
       >
-        <Text style={styles.title}>SETTINGS</Text>
+        <Text style={[styles.title, { color: c.black }]}>SETTINGS</Text>
 
-        <Text style={styles.sectionTitle}>TIMER</Text>
-        <NeuCard color={colors.bgCard} shadowSize="sm">
+        <Text style={[styles.sectionTitle, { color: c.black }]}>TIMER</Text>
+        <NeuCard shadowSize="sm">
           <View style={styles.section}>
             <Stepper
               label="Work"
@@ -176,8 +198,25 @@ export function SettingsScreen() {
           </View>
         </NeuCard>
 
-        <Text style={styles.sectionTitle}>NOTIFICATIONS</Text>
-        <NeuCard color={colors.bgCard} shadowSize="sm">
+        <Text style={[styles.sectionTitle, { color: c.black }]}>APPEARANCE</Text>
+        <NeuCard shadowSize="sm">
+          <View style={styles.section}>
+            <ToggleRow
+              label="Dark Mode"
+              value={isPro ? darkMode : false}
+              onToggle={() => {
+                if (isPro) {
+                  toggleDarkMode();
+                } else {
+                  setShowPaywall(true);
+                }
+              }}
+            />
+          </View>
+        </NeuCard>
+
+        <Text style={[styles.sectionTitle, { color: c.black }]}>NOTIFICATIONS</Text>
+        <NeuCard shadowSize="sm">
           <View style={styles.section}>
             <ToggleRow
               label="Notifications"
@@ -197,18 +236,18 @@ export function SettingsScreen() {
           </View>
         </NeuCard>
 
-        <Text style={styles.sectionTitle}>SUBSCRIPTION</Text>
-        <NeuCard color={colors.bgCard} shadowSize="sm">
+        <Text style={[styles.sectionTitle, { color: c.black }]}>SUBSCRIPTION</Text>
+        <NeuCard shadowSize="sm">
           <View style={styles.section}>
             {isPro ? (
               <View style={styles.proStatus}>
                 <MaterialCommunityIcons name="crown" size={24} color={colors.brightYellow} />
-                <Text style={styles.stepperLabel}>Pro Active</Text>
+                <Text style={[styles.stepperLabel, { color: c.black }]}>Pro Active</Text>
                 <NeuBadge label="PRO" active color={colors.limeGreen} />
               </View>
             ) : (
               <View style={styles.proStatus}>
-                <Text style={styles.stepperLabel}>Free Plan</Text>
+                <Text style={[styles.stepperLabel, { color: c.black }]}>Free Plan</Text>
                 <NeuButton
                   title="Go Pro"
                   onPress={() => setShowPaywall(true)}
@@ -218,34 +257,76 @@ export function SettingsScreen() {
               </View>
             )}
             <Pressable onPress={restorePurchases} style={styles.restoreBtn}>
-              <Text style={styles.restoreText}>Restore Purchases</Text>
+              <Text style={[styles.restoreText, { color: c.black }]}>Restore Purchases</Text>
             </Pressable>
           </View>
         </NeuCard>
 
-        <Text style={styles.sectionTitle}>LEGAL</Text>
-        <NeuCard color={colors.bgCard} shadowSize="sm">
+        <Text style={[styles.sectionTitle, { color: c.black }]}>LEGAL</Text>
+        <NeuCard shadowSize="sm">
           <View style={styles.section}>
             <Pressable
               onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
               style={styles.legalRow}
             >
-              <MaterialCommunityIcons name="file-document-outline" size={20} color={colors.black} />
-              <Text style={styles.stepperLabel}>Terms of Use</Text>
-              <MaterialCommunityIcons name="open-in-new" size={16} color={colors.black} style={{ opacity: 0.4 }} />
+              <MaterialCommunityIcons name="file-document-outline" size={20} color={c.black} />
+              <Text style={[styles.stepperLabel, { color: c.black }]}>Terms of Use</Text>
+              <MaterialCommunityIcons name="open-in-new" size={16} color={c.black} style={{ opacity: 0.4 }} />
             </Pressable>
             <Pressable
               onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
               style={styles.legalRow}
             >
-              <MaterialCommunityIcons name="shield-lock-outline" size={20} color={colors.black} />
-              <Text style={styles.stepperLabel}>Privacy Policy</Text>
-              <MaterialCommunityIcons name="open-in-new" size={16} color={colors.black} style={{ opacity: 0.4 }} />
+              <MaterialCommunityIcons name="shield-lock-outline" size={20} color={c.black} />
+              <Text style={[styles.stepperLabel, { color: c.black }]}>Privacy Policy</Text>
+              <MaterialCommunityIcons name="open-in-new" size={16} color={c.black} style={{ opacity: 0.4 }} />
             </Pressable>
           </View>
         </NeuCard>
 
-        <Text style={styles.sectionTitle}>DATA</Text>
+        <Text style={[styles.sectionTitle, { color: c.black }]}>DATA</Text>
+        <ProGate>
+          <NeuCard shadowSize="sm">
+            <View style={styles.section}>
+              <Pressable
+                onPress={() => {
+                  const s = useStore.getState();
+                  exportDataAsCSV({
+                    tasks: s.tasks,
+                    dailyStats: s.dailyStats,
+                    totalLifetimeSessions: s.totalLifetimeSessions,
+                    totalLifetimeMinutes: s.totalLifetimeMinutes,
+                    currentStreak: s.currentStreak,
+                    longestStreak: s.longestStreak,
+                  });
+                }}
+                style={styles.legalRow}
+              >
+                <MaterialCommunityIcons name="file-delimited-outline" size={20} color={c.black} />
+                <Text style={[styles.stepperLabel, { color: c.black }]}>Export Stats (CSV)</Text>
+                <MaterialCommunityIcons name="share-variant-outline" size={16} color={c.black} style={{ opacity: 0.4 }} />
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  const s = useStore.getState();
+                  exportDataAsJSON({
+                    tasks: s.tasks,
+                    dailyStats: s.dailyStats,
+                    totalLifetimeSessions: s.totalLifetimeSessions,
+                    totalLifetimeMinutes: s.totalLifetimeMinutes,
+                    currentStreak: s.currentStreak,
+                    longestStreak: s.longestStreak,
+                  });
+                }}
+                style={styles.legalRow}
+              >
+                <MaterialCommunityIcons name="code-json" size={20} color={c.black} />
+                <Text style={[styles.stepperLabel, { color: c.black }]}>Export All Data (JSON)</Text>
+                <MaterialCommunityIcons name="share-variant-outline" size={16} color={c.black} style={{ opacity: 0.4 }} />
+              </Pressable>
+            </View>
+          </NeuCard>
+        </ProGate>
         <View style={styles.dataSection}>
           <NeuButton
             title="Reset to Defaults"
@@ -261,7 +342,7 @@ export function SettingsScreen() {
         onClose={() => setShowResetModal(false)}
         title="Reset Settings?"
       >
-        <Text style={styles.modalText}>
+        <Text style={[styles.modalText, { color: c.black }]}>
           This will reset all settings to their default values.
         </Text>
         <View style={styles.modalActions}>
@@ -284,15 +365,11 @@ export function SettingsScreen() {
       </NeuModal>
 
       <PaywallModal visible={showPaywall} onClose={() => setShowPaywall(false)} />
-    </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgSettings,
-  },
   content: {
     padding: spacing.xl,
     gap: spacing.lg,
