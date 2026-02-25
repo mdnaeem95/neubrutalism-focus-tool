@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTimer } from '../hooks/useTimer';
@@ -27,8 +27,16 @@ export function TimerScreen() {
   const timerStatus = useStore((s) => s.timerStatus);
   const { isFocusModeActive, focusScore, shouldShowReminder } = useFocusTracking();
   const [showReminder, setShowReminder] = useState(false);
+  const prevShouldShow = useRef(shouldShowReminder);
 
   // Show reminder when app returns to foreground during focus mode
+  useEffect(() => {
+    if (shouldShowReminder && !prevShouldShow.current) {
+      setShowReminder(true);
+    }
+    prevShouldShow.current = shouldShowReminder;
+  }, [shouldShowReminder]);
+
   const handleDismissReminder = useCallback(() => {
     setShowReminder(false);
   }, []);

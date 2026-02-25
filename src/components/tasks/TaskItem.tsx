@@ -143,13 +143,12 @@ export function TaskItem({ task, drag, isActive }: TaskItemProps) {
             accessibilityLabel={task.assignedToSession ? 'Unassign from session' : 'Assign to session'}
             style={styles.iconBtn}
           >
-            <View style={[
-              styles.assignDot,
-              {
-                backgroundColor: task.assignedToSession ? colors.hotPink : 'transparent',
-                borderColor: task.assignedToSession ? colors.hotPink : '#CCC',
-              },
-            ]} />
+            <MaterialCommunityIcons
+              name={task.assignedToSession ? 'pin' : 'pin-outline'}
+              size={18}
+              color={task.assignedToSession ? colors.hotPink : c.black}
+              style={{ opacity: task.assignedToSession ? 1 : 0.35 }}
+            />
           </Pressable>
           <Pressable
             onPress={handleDelete}
@@ -206,11 +205,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1.5,
     borderColor: borders.color,
-  },
-  assignDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 2,
   },
 });
