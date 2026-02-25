@@ -29,19 +29,28 @@ export const createSubscriptionSlice: StateCreator<
   setPro: (isPro, plan = null) => set({ isPro, subscriptionPlan: plan }),
 
   purchasePackage: async (pkg, plan) => {
-    const success = await rcPurchase(pkg);
-    if (success) {
-      set({ isPro: true, subscriptionPlan: plan });
+    try {
+      const success = await rcPurchase(pkg);
+      if (success) {
+        set({ isPro: true, subscriptionPlan: plan });
+      }
+      return success;
+    } catch (e: any) {
+      if (e.userCancelled) return false;
+      throw e;
     }
-    return success;
   },
 
   restorePurchases: async () => {
-    const hasPro = await restoreUserPurchases();
-    if (hasPro) {
-      set({ isPro: true });
+    try {
+      const hasPro = await restoreUserPurchases();
+      if (hasPro) {
+        set({ isPro: true });
+      }
+      return hasPro;
+    } catch (e) {
+      throw e;
     }
-    return hasPro;
   },
 
   syncSubscriptionStatus: async () => {

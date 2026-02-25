@@ -32,25 +32,13 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
 }
 
 export async function purchasePackage(pkg: PurchasesPackage): Promise<boolean> {
-  try {
-    const { customerInfo } = await Purchases.purchasePackage(pkg);
-    return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  } catch (e: any) {
-    if (!e.userCancelled) {
-      console.warn('Purchase failed:', e);
-    }
-    return false;
-  }
+  const { customerInfo } = await Purchases.purchasePackage(pkg);
+  return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
 }
 
 export async function restoreUserPurchases(): Promise<boolean> {
-  try {
-    const customerInfo = await Purchases.restorePurchases();
-    return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
-  } catch (e) {
-    console.warn('Restore failed:', e);
-    return false;
-  }
+  const customerInfo = await Purchases.restorePurchases();
+  return customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
 }
 
 export async function checkSubscriptionStatus(): Promise<boolean> {

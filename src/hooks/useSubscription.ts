@@ -19,13 +19,21 @@ export function useSubscriptionInit() {
 export function useOfferings() {
   const [offering, setOffering] = useState<PurchasesOffering | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getOfferings().then((offerings) => {
-      setOffering(offerings?.current ?? null);
-      setLoading(false);
-    });
+    getOfferings()
+      .then((offerings) => {
+        setOffering(offerings?.current ?? null);
+        if (!offerings?.current) setError(true);
+      })
+      .catch(() => {
+        setError(true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
-  return { offering, loading };
+  return { offering, loading, error };
 }

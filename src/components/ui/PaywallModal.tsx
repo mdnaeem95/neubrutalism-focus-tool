@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ActivityIndicator, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Linking, Alert } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useStore } from '../../stores';
 import { useOfferings } from '../../hooks/useSubscription';
@@ -28,7 +28,7 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
   const [purchasing, setPurchasing] = useState(false);
   const purchasePackage = useStore((s) => s.purchasePackage);
   const restorePurchases = useStore((s) => s.restorePurchases);
-  const { offering, loading } = useOfferings();
+  const { offering, loading, error: offeringsError } = useOfferings();
 
   const monthlyPkg = offering?.monthly;
   const yearlyPkg = offering?.annual;
@@ -39,16 +39,30 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
     const pkg = plan === 'monthly' ? monthlyPkg : yearlyPkg;
     if (!pkg) return;
     setPurchasing(true);
-    const success = await purchasePackage(pkg, plan);
-    setPurchasing(false);
-    if (success) onClose();
+    try {
+      const success = await purchasePackage(pkg, plan);
+      if (success) onClose();
+    } catch (e: any) {
+      Alert.alert('Purchase Failed', e?.message ?? 'Something went wrong. Please try again.');
+    } finally {
+      setPurchasing(false);
+    }
   };
 
   const handleRestore = async () => {
     setPurchasing(true);
-    const success = await restorePurchases();
-    setPurchasing(false);
-    if (success) onClose();
+    try {
+      const success = await restorePurchases();
+      if (success) {
+        onClose();
+      } else {
+        Alert.alert('No Subscription Found', 'We couldn\'t find an active subscription for this account.');
+      }
+    } catch (e: any) {
+      Alert.alert('Restore Failed', e?.message ?? 'Something went wrong. Please try again.');
+    } finally {
+      setPurchasing(false);
+    }
   };
 
   return (
@@ -94,6 +108,15 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
 
       {purchasing ? (
         <ActivityIndicator size="large" color={colors.hotPink} style={styles.loader} />
+      ) : offeringsError ? (
+        <View style={styles.actions}>
+          <Text style={[styles.errorText, { color: c.black }]}>
+            Unable to load subscription options. Please check your connection and try again.
+          </Text>
+          <Pressable onPress={handleRestore} style={styles.restoreBtn}>
+            <Text style={[styles.restoreText, { color: c.black }]}>Restore Purchases</Text>
+          </Pressable>
+        </View>
       ) : (
         <View style={styles.actions}>
           <NeuButton
@@ -101,7 +124,7 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
             onPress={handlePurchase}
             color={colors.hotPink}
             size="lg"
-            disabled={loading && !monthlyPkg && !yearlyPkg}
+            disabled={loading || (!monthlyPkg && !yearlyPkg)}
           />
           <Pressable onPress={handleRestore} style={styles.restoreBtn}>
             <Text style={[styles.restoreText, { color: c.black }]}>Restore Purchases</Text>
@@ -190,6 +213,13 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginVertical: spacing.xl,
+  },
+  errorText: {
+    fontFamily: typography.fontFamily.mono,
+    fontSize: typography.fontSize.sm,
+    color: colors.black,
+    textAlign: 'center',
+    opacity: 0.6,
   },
   legalLinks: {
     flexDirection: 'row',
