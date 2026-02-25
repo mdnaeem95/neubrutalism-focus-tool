@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { TimerScreen } from '../screens/TimerScreen';
 import { TasksScreen } from '../screens/TasksScreen';
@@ -7,11 +7,20 @@ import { SettingsScreen } from '../screens/SettingsScreen';
 import { NeuTabBar } from '../components/ui/NeuTabBar';
 import { RootTabParamList } from '../types/navigation';
 import { useDailyReminder } from '../hooks/useDailyReminder';
+import { useAppState } from '../hooks/useAppState';
+import { useStore } from '../stores';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
+const noop = () => {};
 
 export function TabNavigator() {
   useDailyReminder();
+
+  const syncSubscriptionStatus = useStore((s) => s.syncSubscriptionStatus);
+  const onForeground = useCallback(() => {
+    syncSubscriptionStatus();
+  }, [syncSubscriptionStatus]);
+  useAppState(onForeground, noop);
   return (
     <Tab.Navigator
       tabBar={(props) => <NeuTabBar {...props} />}
