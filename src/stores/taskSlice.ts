@@ -3,6 +3,9 @@ import * as Crypto from 'expo-crypto';
 import { Task } from '../types/task';
 import { FREE_TIER_MAX_TASKS } from '../utils/constants';
 
+/** Minimal fields from other slices needed for cross-slice access. */
+type SharedSlices = TaskSlice & { isPro: boolean };
+
 export interface TaskSlice {
   tasks: Task[];
   taskLimitReached: boolean;
@@ -18,13 +21,13 @@ export interface TaskSlice {
   clearCompletedTasks: () => void;
 }
 
-export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set, get) => ({
+export const createTaskSlice: StateCreator<SharedSlices, [], [], TaskSlice> = (set, get) => ({
   tasks: [],
   taskLimitReached: false,
 
   addTask: (text, category) => {
-    const state = get() as any;
-    const activeTasks = state.tasks.filter((t: Task) => !t.completed).length;
+    const state = get();
+    const activeTasks = state.tasks.filter((t) => !t.completed).length;
     if (!state.isPro && activeTasks >= FREE_TIER_MAX_TASKS) {
       set({ taskLimitReached: true });
       return;
@@ -61,18 +64,28 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set,
     })),
 
   toggleTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.map((t) =>
+    set((state) => {
+      const tasks = state.tasks.map((t) =>
         t.id === id
           ? { ...t, completed: !t.completed, completedAt: !t.completed ? Date.now() : undefined }
           : t
-      ),
-    })),
+      );
+      const activeCount = tasks.filter((t) => !t.completed).length;
+      return {
+        tasks,
+        taskLimitReached: activeCount >= FREE_TIER_MAX_TASKS ? state.taskLimitReached : false,
+      };
+    }),
 
   deleteTask: (id) =>
-    set((state) => ({
-      tasks: state.tasks.filter((t) => t.id !== id),
-    })),
+    set((state) => {
+      const tasks = state.tasks.filter((t) => t.id !== id);
+      const activeCount = tasks.filter((t) => !t.completed).length;
+      return {
+        tasks,
+        taskLimitReached: activeCount >= FREE_TIER_MAX_TASKS ? state.taskLimitReached : false,
+      };
+    }),
 
   reorderTasks: (fromIndex, toIndex) =>
     set((state) => {

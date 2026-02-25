@@ -22,7 +22,13 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'focus-app-storage',
+      version: 1,
       storage: createJSONStorage(() => AsyncStorage),
+      migrate: (persisted: any, version: number) => {
+        // Future migrations go here:
+        // if (version === 0) { /* v0 → v1 transforms */ }
+        return persisted as AppState;
+      },
       partialize: (state) => ({
         tasks: state.tasks,
         dailyStats: state.dailyStats,

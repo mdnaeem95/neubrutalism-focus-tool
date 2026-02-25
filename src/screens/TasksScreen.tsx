@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useScreenEntrance } from '../hooks/useScreenEntrance';
@@ -22,7 +22,7 @@ export function TasksScreen() {
   const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const tasks = useStore((s) => s.tasks);
   const clearCompletedTasks = useStore((s) => s.clearCompletedTasks);
-  const completedCount = tasks.filter((t) => t.completed).length;
+  const completedCount = useMemo(() => tasks.filter((t) => t.completed).length, [tasks]);
 
   return (
     <ScreenContainer style={{ backgroundColor: c.bgTasks, paddingTop: insets.top + spacing.lg }}>

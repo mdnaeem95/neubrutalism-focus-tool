@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import DraggableFlatList, { RenderItemParams } from 'react-native-draggable-flatlist';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -25,12 +25,16 @@ export function TaskList({ filter, categoryFilter }: TaskListProps) {
   const tasks = useStore((s) => s.tasks);
   const reorderTasks = useStore((s) => s.reorderTasks);
 
-  const filtered = tasks.filter((t) => {
-    if (filter === 'active' && t.completed) return false;
-    if (filter === 'completed' && !t.completed) return false;
-    if (categoryFilter && t.category !== categoryFilter) return false;
-    return true;
-  });
+  const filtered = useMemo(
+    () =>
+      tasks.filter((t) => {
+        if (filter === 'active' && t.completed) return false;
+        if (filter === 'completed' && !t.completed) return false;
+        if (categoryFilter && t.category !== categoryFilter) return false;
+        return true;
+      }),
+    [tasks, filter, categoryFilter]
+  );
 
   const handleDragEnd = useCallback(
     ({ from, to }: { from: number; to: number }) => {
@@ -76,6 +80,8 @@ export function TaskList({ filter, categoryFilter }: TaskListProps) {
         onDragEnd={handleDragEnd}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="handled"
       />
     );
   }
@@ -87,6 +93,8 @@ export function TaskList({ filter, categoryFilter }: TaskListProps) {
       renderItem={renderItem}
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
+      keyboardShouldPersistTaps="handled"
     />
   );
 }

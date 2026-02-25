@@ -14,6 +14,7 @@ import { OnboardingScreen } from './src/screens/OnboardingScreen';
 import { useStore } from './src/stores';
 import { requestNotificationPermissions } from './src/hooks/useNotifications';
 import { initializePurchases } from './src/utils/purchases';
+import { AppErrorBoundary } from './src/components/ui/ErrorBoundary';
 
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? '',
@@ -119,9 +120,11 @@ function AppContent() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <NavigationContainer>
-            <TabNavigator />
-          </NavigationContainer>
+          <AppErrorBoundary>
+            <NavigationContainer>
+              <TabNavigator />
+            </NavigationContainer>
+          </AppErrorBoundary>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -45,5 +45,5 @@ export function useReviewPrompt() {
         }
       });
     }
-  }, [totalSessions]);
+  }, [totalSessions, lastPromptDate, promptCount, recordReviewPrompt]);
 }

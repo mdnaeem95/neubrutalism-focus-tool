@@ -27,7 +27,10 @@ function AnimatedBar({
         useNativeDriver: false,
       }).start();
     }, index * 60);
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      animHeight.stopAnimation();
+    };
   }, []);
 
   return (

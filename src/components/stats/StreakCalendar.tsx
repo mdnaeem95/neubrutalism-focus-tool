@@ -10,17 +10,19 @@ function AnimatedCell({ hasSession, index }: { hasSession: boolean; index: numbe
   const scale = useRef(new Animated.Value(hasSession ? 0 : 1)).current;
 
   useEffect(() => {
-    if (hasSession) {
-      const timeout = setTimeout(() => {
-        Animated.spring(scale, {
-          toValue: 1,
-          speed: 14,
-          bounciness: 8,
-          useNativeDriver: true,
-        }).start();
-      }, index * 15);
-      return () => clearTimeout(timeout);
-    }
+    if (!hasSession) return;
+    const timeout = setTimeout(() => {
+      Animated.spring(scale, {
+        toValue: 1,
+        speed: 14,
+        bounciness: 8,
+        useNativeDriver: true,
+      }).start();
+    }, index * 15);
+    return () => {
+      clearTimeout(timeout);
+      scale.stopAnimation();
+    };
   }, []);
 
   return (

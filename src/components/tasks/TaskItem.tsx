@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Animated } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Task } from '../../types/task';
@@ -16,7 +16,7 @@ interface TaskItemProps {
   isActive?: boolean;
 }
 
-export function TaskItem({ task, drag, isActive }: TaskItemProps) {
+export const TaskItem = memo(function TaskItem({ task, drag, isActive }: TaskItemProps) {
   const c = useColors();
   const customCategories = useStore((s) => s.customCategories);
   const toggleTask = useStore((s) => s.toggleTask);
@@ -162,7 +162,7 @@ export function TaskItem({ task, drag, isActive }: TaskItemProps) {
       </NeuCard>
     </Animated.View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

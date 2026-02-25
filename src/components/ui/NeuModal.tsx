@@ -19,6 +19,8 @@ export function NeuModal({ visible, onClose, title, children }: NeuModalProps) {
   const cardOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    let cancelled = false;
+
     if (visible) {
       setShowModal(true);
       overlayOpacity.setValue(0);
@@ -56,9 +58,16 @@ export function NeuModal({ visible, onClose, title, children }: NeuModalProps) {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        setShowModal(false);
+        if (!cancelled) setShowModal(false);
       });
     }
+
+    return () => {
+      cancelled = true;
+      overlayOpacity.stopAnimation();
+      cardScale.stopAnimation();
+      cardOpacity.stopAnimation();
+    };
   }, [visible]);
 
   return (

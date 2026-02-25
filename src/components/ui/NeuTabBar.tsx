@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { memo, useRef, useEffect, useCallback } from 'react';
 import { View, Pressable, Text, StyleSheet, Animated } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { typography, borders, spacing } from '../../theme';
 import { useColors } from '../../theme/ThemeContext';
 
@@ -19,7 +20,7 @@ const TAB_ICONS: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = 
   Settings: 'cog-outline',
 };
 
-function TabItem({
+const TabItem = memo(function TabItem({
   label,
   isFocused,
   onPress,
@@ -69,40 +70,51 @@ function TabItem({
       <Text
         style={[
           styles.label,
-          { color: isFocused ? c.black : '#666' },
+          { color: isFocused ? c.black : c.black, opacity: isFocused ? 1 : 0.4 },
         ]}
       >
         {label}
       </Text>
     </Pressable>
   );
-}
+});
 
 export function NeuTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const c = useColors();
+  const insets = useSafeAreaInsets();
+
+  const handlePress = useCallback(
+    (routeKey: string, routeName: string, isFocused: boolean) => {
+      const event = navigation.emit({
+        type: 'tabPress',
+        target: routeKey,
+        canPreventDefault: true,
+      });
+      if (!isFocused && !event.defaultPrevented) {
+        navigation.navigate(routeName);
+      }
+    },
+    [navigation]
+  );
+
   return (
-    <View style={[styles.container, { backgroundColor: c.cream }]} accessibilityRole="tablist">
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: c.cream, paddingBottom: Math.max(insets.bottom, 12) },
+      ]}
+      accessibilityRole="tablist"
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
-
-        const onPress = () => {
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        };
 
         return (
           <TabItem
             key={route.key}
             label={route.name}
             isFocused={isFocused}
-            onPress={onPress}
+            onPress={() => handlePress(route.key, route.name, isFocused)}
             accessibilityLabel={options.tabBarAccessibilityLabel}
           />
         );
@@ -116,7 +128,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderTopWidth: borders.width.thick,
     borderTopColor: borders.color,
-    paddingBottom: 24,
     paddingTop: spacing.sm,
   },
   tab: {
