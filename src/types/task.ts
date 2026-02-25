@@ -6,4 +6,5 @@ export interface Task {
   completedAt?: number;
   order: number;
   assignedToSession: boolean;
+  category?: string;
 }

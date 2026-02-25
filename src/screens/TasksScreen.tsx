@@ -7,6 +7,7 @@ import { TaskInput } from '../components/tasks/TaskInput';
 import { TaskList } from '../components/tasks/TaskList';
 import { NeuBadge } from '../components/ui/NeuBadge';
 import { NeuButton } from '../components/ui/NeuButton';
+import { CategoryPicker } from '../components/tasks/CategoryPicker';
 import { ScreenContainer } from '../components/ui/ScreenContainer';
 import { colors, typography, spacing } from '../theme';
 import { useColors } from '../theme/ThemeContext';
@@ -18,6 +19,7 @@ export function TasksScreen() {
   const { opacity, translateY } = useScreenEntrance();
   const c = useColors();
   const [filter, setFilter] = useState<Filter>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const tasks = useStore((s) => s.tasks);
   const clearCompletedTasks = useStore((s) => s.clearCompletedTasks);
   const completedCount = tasks.filter((t) => t.completed).length;
@@ -44,8 +46,14 @@ export function TasksScreen() {
           ))}
         </View>
 
+        <CategoryPicker
+          selectedCategory={categoryFilter}
+          onSelectCategory={setCategoryFilter}
+          variant="badges"
+        />
+
         <View style={styles.list}>
-          <TaskList filter={filter} />
+          <TaskList filter={filter} categoryFilter={categoryFilter} />
         </View>
 
         {completedCount > 0 && (

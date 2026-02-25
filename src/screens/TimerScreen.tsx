@@ -4,6 +4,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTimer } from '../hooks/useTimer';
 import { useFocusTracking } from '../hooks/useFocusTracking';
 import { useScreenEntrance } from '../hooks/useScreenEntrance';
+import { useReviewPrompt } from '../hooks/useReviewPrompt';
+import { PresetPicker } from '../components/timer/PresetPicker';
+import { useStore } from '../stores';
 import { TimerDisplay } from '../components/timer/TimerDisplay';
 import { TimerControls } from '../components/timer/TimerControls';
 import { SessionIndicator } from '../components/timer/SessionIndicator';
@@ -20,6 +23,8 @@ export function TimerScreen() {
   const { opacity, translateY } = useScreenEntrance();
   const c = useColors();
   useTimer();
+  useReviewPrompt();
+  const timerStatus = useStore((s) => s.timerStatus);
   const { isFocusModeActive, focusScore, shouldShowReminder } = useFocusTracking();
   const [showReminder, setShowReminder] = useState(false);
 
@@ -38,6 +43,8 @@ export function TimerScreen() {
         <Text style={[styles.title, { color: c.black }]}>FOCUS</Text>
 
         <SessionIndicator />
+
+        {timerStatus === 'idle' ? <PresetPicker /> : undefined}
 
         <View style={styles.timerWrap}>
           <TimerDisplay />

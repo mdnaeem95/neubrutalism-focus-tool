@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.mono,
     fontSize: typography.fontSize.sm,
     color: colors.black,
-    opacity: 0.5,
+    opacity: 0.65,
     textAlign: 'center',
   },
 });

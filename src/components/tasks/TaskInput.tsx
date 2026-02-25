@@ -4,6 +4,7 @@ import { useStore } from '../../stores';
 import { NeuInput } from '../ui/NeuInput';
 import { NeuButton } from '../ui/NeuButton';
 import { PaywallModal } from '../ui/PaywallModal';
+import { CategoryPicker } from './CategoryPicker';
 import { useHaptics } from '../../hooks/useHaptics';
 import { spacing } from '../../theme';
 import { useColors } from '../../theme/ThemeContext';
@@ -11,6 +12,7 @@ import { useColors } from '../../theme/ThemeContext';
 export function TaskInput() {
   const c = useColors();
   const [text, setText] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [showPaywall, setShowPaywall] = useState(false);
   const addTask = useStore((s) => s.addTask);
   const taskLimitReached = useStore((s) => s.taskLimitReached);
@@ -25,7 +27,7 @@ export function TaskInput() {
   const handleAdd = () => {
     const trimmed = text.trim();
     if (!trimmed) return;
-    addTask(trimmed);
+    addTask(trimmed, selectedCategory);
     if (!useStore.getState().taskLimitReached) {
       setText('');
     }
@@ -52,6 +54,10 @@ export function TaskInput() {
           disabled={!text.trim()}
         />
       </View>
+      <CategoryPicker
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
       <PaywallModal visible={showPaywall} onClose={() => setShowPaywall(false)} />
     </>
   );

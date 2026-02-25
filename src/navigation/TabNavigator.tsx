@@ -6,10 +6,12 @@ import { StatsScreen } from '../screens/StatsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { NeuTabBar } from '../components/ui/NeuTabBar';
 import { RootTabParamList } from '../types/navigation';
+import { useDailyReminder } from '../hooks/useDailyReminder';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 
 export function TabNavigator() {
+  useDailyReminder();
   return (
     <Tab.Navigator
       tabBar={(props) => <NeuTabBar {...props} />}

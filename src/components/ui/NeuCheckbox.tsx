@@ -86,7 +86,7 @@ export function NeuCheckbox({ checked, onToggle, color = colors.limeGreen }: Neu
 
 const styles = StyleSheet.create({
   container: {
-    padding: 2,
+    padding: 8,
   },
   box: {
     width: 28,

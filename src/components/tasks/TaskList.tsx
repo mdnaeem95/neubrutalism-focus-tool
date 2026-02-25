@@ -11,6 +11,7 @@ import { useColors } from '../../theme/ThemeContext';
 
 interface TaskListProps {
   filter: 'all' | 'active' | 'completed';
+  categoryFilter?: string | null;
 }
 
 const EMPTY_CONFIG: Record<string, { icon: keyof typeof MaterialCommunityIcons.glyphMap; title: string; subtitle: string }> = {
@@ -19,14 +20,15 @@ const EMPTY_CONFIG: Record<string, { icon: keyof typeof MaterialCommunityIcons.g
   completed: { icon: 'flag-checkered', title: 'Nothing completed yet', subtitle: 'Start checking off tasks to see them here.' },
 };
 
-export function TaskList({ filter }: TaskListProps) {
+export function TaskList({ filter, categoryFilter }: TaskListProps) {
   const c = useColors();
   const tasks = useStore((s) => s.tasks);
   const reorderTasks = useStore((s) => s.reorderTasks);
 
   const filtered = tasks.filter((t) => {
-    if (filter === 'active') return !t.completed;
-    if (filter === 'completed') return t.completed;
+    if (filter === 'active' && t.completed) return false;
+    if (filter === 'completed' && !t.completed) return false;
+    if (categoryFilter && t.category !== categoryFilter) return false;
     return true;
   });
 
@@ -64,8 +66,8 @@ export function TaskList({ filter }: TaskListProps) {
     );
   }
 
-  // Use draggable list only for unfiltered "all" view
-  if (filter === 'all') {
+  // Use draggable list only for unfiltered "all" view with no category filter
+  if (filter === 'all' && !categoryFilter) {
     return (
       <DraggableFlatList
         data={filtered}
@@ -112,7 +114,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.mono,
     fontSize: typography.fontSize.sm,
     color: colors.black,
-    opacity: 0.5,
+    opacity: 0.65,
     textAlign: 'center',
   },
 });

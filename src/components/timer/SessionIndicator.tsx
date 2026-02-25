@@ -55,8 +55,11 @@ export function SessionIndicator() {
         const isCompleted = sessionNum < currentSession;
         const isCurrent = sessionNum === currentSession && timerPhase === 'work';
 
+        const status = isCompleted ? 'completed' : isCurrent ? 'current' : 'upcoming';
         return (
-          <Dot key={i} isCompleted={isCompleted} isCurrent={isCurrent} />
+          <View key={i} accessibilityLabel={`Session ${sessionNum}: ${status}`}>
+            <Dot isCompleted={isCompleted} isCurrent={isCurrent} />
+          </View>
         );
       })}
     </View>

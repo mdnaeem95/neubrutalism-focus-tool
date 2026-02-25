@@ -7,7 +7,8 @@ export interface TaskSlice {
   tasks: Task[];
   taskLimitReached: boolean;
 
-  addTask: (text: string) => void;
+  addTask: (text: string, category?: string) => void;
+  updateTaskCategory: (id: string, category: string | undefined) => void;
   editTask: (id: string, text: string) => void;
   toggleTask: (id: string) => void;
   deleteTask: (id: string) => void;
@@ -21,7 +22,7 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set,
   tasks: [],
   taskLimitReached: false,
 
-  addTask: (text) => {
+  addTask: (text, category) => {
     const state = get() as any;
     const activeTasks = state.tasks.filter((t: Task) => !t.completed).length;
     if (!state.isPro && activeTasks >= FREE_TIER_MAX_TASKS) {
@@ -38,11 +39,19 @@ export const createTaskSlice: StateCreator<TaskSlice, [], [], TaskSlice> = (set,
           createdAt: Date.now(),
           order: s.tasks.length,
           assignedToSession: false,
+          ...(category ? { category } : {}),
         },
         ...s.tasks,
       ],
     }));
   },
+
+  updateTaskCategory: (id, category) =>
+    set((state) => ({
+      tasks: state.tasks.map((t) =>
+        t.id === id ? { ...t, category } : t
+      ),
+    })),
 
   editTask: (id, text) =>
     set((state) => ({

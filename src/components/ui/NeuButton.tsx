@@ -141,7 +141,7 @@ export function NeuButton({
             styles.text,
             {
               fontSize: sizeConfig.fontSize,
-              color: disabled ? '#999' : c.black,
+              color: disabled ? '#666' : c.black,
             },
             textStyle,
           ]}

@@ -15,6 +15,7 @@ import { PRIVACY_POLICY_URL, TERMS_OF_USE_URL } from '../utils/constants';
 import { ScreenContainer } from '../components/ui/ScreenContainer';
 import { exportDataAsJSON, exportDataAsCSV } from '../utils/exportData';
 import { useColors } from '../theme/ThemeContext';
+import { PresetPicker } from '../components/timer/PresetPicker';
 
 function Stepper({
   label,
@@ -151,13 +152,26 @@ export function SettingsScreen() {
   const hapticsEnabled = useStore((s) => s.hapticsEnabled);
   const soundEnabled = useStore((s) => s.soundEnabled);
 
+  const dailyReminderEnabled = useStore((s) => s.dailyReminderEnabled);
+  const dailyReminderHour = useStore((s) => s.dailyReminderHour);
+  const dailyReminderMinute = useStore((s) => s.dailyReminderMinute);
+
   const updateWorkDuration = useStore((s) => s.updateWorkDuration);
   const updateShortBreak = useStore((s) => s.updateShortBreak);
   const updateLongBreak = useStore((s) => s.updateLongBreak);
   const toggleNotifications = useStore((s) => s.toggleNotifications);
   const toggleHaptics = useStore((s) => s.toggleHaptics);
   const toggleSound = useStore((s) => s.toggleSound);
+  const toggleDailyReminder = useStore((s) => s.toggleDailyReminder);
+  const updateDailyReminderTime = useStore((s) => s.updateDailyReminderTime);
   const resetSettingsToDefaults = useStore((s) => s.resetSettingsToDefaults);
+
+  const formatReminderTime = () => {
+    const h = dailyReminderHour % 12 || 12;
+    const m = dailyReminderMinute.toString().padStart(2, '0');
+    const ampm = dailyReminderHour < 12 ? 'AM' : 'PM';
+    return `${h}:${m} ${ampm}`;
+  };
 
   return (
     <ScreenContainer style={{ backgroundColor: c.bgSettings, paddingTop: insets.top + spacing.lg }}>
@@ -169,6 +183,7 @@ export function SettingsScreen() {
         <Text style={[styles.title, { color: c.black }]}>SETTINGS</Text>
 
         <Text style={[styles.sectionTitle, { color: c.black }]}>TIMER</Text>
+        <PresetPicker />
         <NeuCard shadowSize="sm">
           <View style={styles.section}>
             <Stepper
@@ -233,6 +248,48 @@ export function SettingsScreen() {
               value={hapticsEnabled}
               onToggle={toggleHaptics}
             />
+            <ToggleRow
+              label="Daily Reminder"
+              value={dailyReminderEnabled}
+              onToggle={toggleDailyReminder}
+            />
+            {dailyReminderEnabled ? (
+              <View style={styles.stepperRow}>
+                <Text style={[styles.stepperLabel, { color: c.black }]}>Time</Text>
+                <View style={styles.stepperControls}>
+                  <Pressable
+                    onPress={() => {
+                      let newHour = dailyReminderHour - 1;
+                      if (newHour < 0) newHour = 23;
+                      updateDailyReminderTime(newHour, dailyReminderMinute);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Decrease reminder hour"
+                    style={[styles.stepperBtn, { backgroundColor: c.bgCard }]}
+                  >
+                    <Text style={[styles.stepperBtnText, { color: c.black }]}>−</Text>
+                  </Pressable>
+                  <Text
+                    accessibilityLabel={`Reminder time: ${formatReminderTime()}`}
+                    style={[styles.stepperValue, { color: c.black, minWidth: 80 }]}
+                  >
+                    {formatReminderTime()}
+                  </Text>
+                  <Pressable
+                    onPress={() => {
+                      let newHour = dailyReminderHour + 1;
+                      if (newHour > 23) newHour = 0;
+                      updateDailyReminderTime(newHour, dailyReminderMinute);
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Increase reminder hour"
+                    style={[styles.stepperBtn, { backgroundColor: c.bgCard }]}
+                  >
+                    <Text style={[styles.stepperBtnText, { color: c.black }]}>+</Text>
+                  </Pressable>
+                </View>
+              </View>
+            ) : undefined}
           </View>
         </NeuCard>
 
@@ -408,8 +465,8 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   stepperBtn: {
-    width: 36,
-    height: 36,
+    width: 44,
+    height: 44,
     borderRadius: borders.radius.sm,
     borderWidth: borders.width.medium,
     borderColor: borders.color,

@@ -8,6 +8,7 @@ import { NeuCard } from '../ui/NeuCard';
 import { colors, typography, spacing, borders } from '../../theme';
 import { useColors } from '../../theme/ThemeContext';
 import { useHaptics } from '../../hooks/useHaptics';
+import { BUILT_IN_CATEGORIES } from '../../utils/constants';
 
 interface TaskItemProps {
   task: Task;
@@ -17,6 +18,7 @@ interface TaskItemProps {
 
 export function TaskItem({ task, drag, isActive }: TaskItemProps) {
   const c = useColors();
+  const customCategories = useStore((s) => s.customCategories);
   const toggleTask = useStore((s) => s.toggleTask);
   const deleteTask = useStore((s) => s.deleteTask);
   const editTask = useStore((s) => s.editTask);
@@ -99,6 +101,16 @@ export function TaskItem({ task, drag, isActive }: TaskItemProps) {
             </Pressable>
           ) : undefined}
           <NeuCheckbox checked={task.completed} onToggle={handleToggle} />
+          {task.category ? (() => {
+            const allCats = [...BUILT_IN_CATEGORIES, ...customCategories];
+            const cat = allCats.find((c) => c.id === task.category);
+            return cat ? (
+              <View
+                style={[styles.categoryDot, { backgroundColor: cat.color }]}
+                accessibilityLabel={`${cat.name} category`}
+              />
+            ) : undefined;
+          })() : undefined}
           {editing ? (
             <TextInput
               style={[styles.editInput, { color: c.black }]}
@@ -182,11 +194,18 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   iconBtn: {
-    padding: spacing.xs,
-    minWidth: 28,
-    minHeight: 28,
+    padding: spacing.sm,
+    minWidth: 44,
+    minHeight: 44,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  categoryDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    borderWidth: 1.5,
+    borderColor: borders.color,
   },
   assignDot: {
     width: 12,

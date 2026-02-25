@@ -71,10 +71,15 @@ export function TimerDisplay() {
           <Text
             style={[styles.time, { color: c.black }]}
             accessibilityLabel={`${Math.floor(secondsRemaining / 60)} minutes ${secondsRemaining % 60} seconds remaining`}
+            accessibilityLiveRegion="polite"
+            maxFontSizeMultiplier={1}
           >
             {formatTime(secondsRemaining)}
           </Text>
-          <View style={[styles.phaseBadge, { backgroundColor: PHASE_COLORS[timerPhase] + '30' }]}>
+          <View
+            style={[styles.phaseBadge, { backgroundColor: PHASE_COLORS[timerPhase] + '30' }]}
+            accessibilityLabel={`Current phase: ${PHASE_LABELS[timerPhase]}`}
+          >
             <Text style={[styles.phase, { color: PHASE_COLORS[timerPhase] }]}>
               {PHASE_LABELS[timerPhase]}
             </Text>

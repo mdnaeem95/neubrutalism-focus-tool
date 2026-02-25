@@ -16,7 +16,11 @@ export function FocusScore({ score, visible }: FocusScoreProps) {
 
   return (
     <NeuCard color={scoreColor} shadowSize="sm">
-      <View style={styles.container}>
+      <View
+        style={styles.container}
+        accessibilityLabel={`Focus score: ${score} percent`}
+        accessibilityLiveRegion="polite"
+      >
         <Text style={styles.label}>FOCUS SCORE</Text>
         <Text style={styles.score}>{score}%</Text>
       </View>

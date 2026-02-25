@@ -69,7 +69,7 @@ function TabItem({
       <Text
         style={[
           styles.label,
-          { color: isFocused ? c.black : '#999' },
+          { color: isFocused ? c.black : '#666' },
         ]}
       >
         {label}

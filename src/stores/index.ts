@@ -41,6 +41,15 @@ export const useStore = create<AppState>()(
         hasOnboarded: state.hasOnboarded,
         isPro: state.isPro,
         subscriptionPlan: state.subscriptionPlan,
+        // v1.2.0
+        selectedPresetId: state.selectedPresetId,
+        customPresets: state.customPresets,
+        customCategories: state.customCategories,
+        dailyReminderEnabled: state.dailyReminderEnabled,
+        dailyReminderHour: state.dailyReminderHour,
+        dailyReminderMinute: state.dailyReminderMinute,
+        lastReviewPromptDate: state.lastReviewPromptDate,
+        reviewPromptCount: state.reviewPromptCount,
       }),
       onRehydrateStorage: () => (state) => {
         // Timer state is not persisted, so secondsRemaining defaults to
