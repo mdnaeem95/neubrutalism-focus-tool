@@ -112,6 +112,8 @@ export function PaywallModal({ visible, onClose }: PaywallModalProps) {
         <View style={styles.actions}>
           <Text style={[styles.errorText, { color: c.black }]}>
             Unable to load subscription options. Please check your connection and try again.
+            {'\n\n'}
+            {offeringsError}
           </Text>
           <Pressable onPress={handleRestore} style={styles.restoreBtn}>
             <Text style={[styles.restoreText, { color: c.black }]}>Restore Purchases</Text>

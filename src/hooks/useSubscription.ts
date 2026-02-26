@@ -19,16 +19,18 @@ export function useSubscriptionInit() {
 export function useOfferings() {
   const [offering, setOffering] = useState<PurchasesOffering | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getOfferings()
       .then((offerings) => {
         setOffering(offerings?.current ?? null);
-        if (!offerings?.current) setError(true);
+        if (!offerings?.current) {
+          setError('No current offering found in RevenueCat dashboard.');
+        }
       })
-      .catch(() => {
-        setError(true);
+      .catch((e: any) => {
+        setError(e?.message ?? 'Unknown error loading offerings');
       })
       .finally(() => {
         setLoading(false);

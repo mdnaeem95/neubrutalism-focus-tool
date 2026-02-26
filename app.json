@@ -2,7 +2,7 @@
   "expo": {
     "name": "Fokus",
     "slug": "fokus",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -13,7 +13,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fokusapp.app",
-      "buildNumber": "11",
+      "buildNumber": "13",
       "infoPlist": {
         "NSUserNotificationsUsageDescription": "Fokus sends notifications when your timer sessions end so you know when to take a break or get back to work.",
         "ITSAppUsesNonExemptEncryption": false

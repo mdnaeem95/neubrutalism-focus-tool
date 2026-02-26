@@ -12,17 +12,26 @@ const API_KEYS = {
 
 const ENTITLEMENT_ID = 'pro';
 
-export async function initializePurchases(): Promise<void> {
-  try {
+let initPromise: Promise<void> | null = null;
+
+export function initializePurchases(): Promise<void> {
+  if (initPromise) return initPromise;
+
+  initPromise = (async () => {
     const apiKey = Platform.OS === 'ios' ? API_KEYS.ios : API_KEYS.android;
+    if (!apiKey) {
+      throw new Error(`RevenueCat API key is empty for ${Platform.OS}`);
+    }
     Purchases.configure({ apiKey });
-  } catch (e) {
-    console.warn('RevenueCat init failed:', e);
-  }
+  })();
+
+  return initPromise;
 }
 
 export async function getOfferings(): Promise<PurchasesOfferings | null> {
   try {
+    // Ensure SDK is initialized before fetching
+    await initializePurchases();
     const offerings = await Purchases.getOfferings();
     return offerings;
   } catch (e) {
