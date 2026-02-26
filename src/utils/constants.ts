@@ -8,8 +8,8 @@ export const DEFAULT_SESSIONS_BEFORE_LONG_BREAK = 4;
 export const FREE_TIER_MAX_TASKS = 10;
 export const FOCUS_SCORE_PENALTY = 15;
 
-export const PRIVACY_POLICY_URL = 'https://mdnaeem95.github.io/neubrutalism-focus-tool/privacy-policy.html';
-export const TERMS_OF_USE_URL = 'https://mdnaeem95.github.io/neubrutalism-focus-tool/terms-of-use.html';
+export const PRIVACY_POLICY_URL = 'https://neubrut-website.vercel.app/legal/privacy-fokus';
+export const TERMS_OF_USE_URL = 'https://neubrut-website.vercel.app/legal/terms-fokus';
 
 // Timer Presets
 export const BUILT_IN_PRESETS: TimerPreset[] = [
